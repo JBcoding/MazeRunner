@@ -1,0 +1,1541 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Ricochet Robots Runner</title>
+	<!--<meta name="viewport" content="user-scalable=no, width=device-width, initial-scale=1, maximum-scale=1">-->
+	<script type="text/javascript" src="https://code.jquery.com/jquery-2.2.1.min.js"></script>
+	<script type="text/javascript" src="https://code.jquery.com/ui/1.11.4/jquery-ui.min.js"></script>
+	<link href="https://code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css" rel="stylesheet" type="text/css">
+	  <style>
+
+* {
+	margin: 0;
+	padding: 0;
+}
+
+html {
+	height: 100%;
+	overflow: hidden;
+}
+
+body {
+	height: 100%;
+	width: 100%;
+	position: fixed;
+	overflow: hidden;
+}
+
+#appdiv {
+    border:2px solid black;
+    width:1000px;
+    height: 500px;
+    margin: 0 auto;
+}
+
+.canvaswrapper {  
+  display:inline-block;
+  float:left;
+  height: 100%;
+}
+
+canvas {
+	-webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+
+.sidebar {
+  position: relative;
+  display: inline-block;
+  float:left;
+  width: 150px;
+  height: 100%;
+  border-left: 1px solid black;
+}
+
+.controls {
+  height: 50px;
+}
+
+.moveslistwrapper {
+	position: relative;
+    background: white;
+    overflow-y:scroll;
+    -webkit-overflow-scrolling: touch;
+    margin: 0;
+    padding: 0;
+    height: 400px;
+}
+
+.moveslist ul {
+  width: 100%;
+  border-top: 1px solid black;
+  margin: 0;
+  padding: 0;
+  padding-bottom: 50px;
+}
+.moveslist li {
+  background: #eee;
+  list-style-type: none;
+  border-bottom: 1px solid black;
+  line-height: 15px;
+  margin: 0;
+  padding: 0;
+}
+
+.moveslist a:hover {
+  font-size: 14px;
+}
+
+.moveslist .selected {
+  background: rgb(106, 193, 82);
+}
+
+.moveslist a {
+  display: block;
+  font-weight: bold;
+  text-align: center;
+  font-size: 12px;
+  padding: 4% 4%;
+}
+
+.optionsMenu {
+  position: absolute;
+  height: 50px;
+  bottom: 0px;
+  display: inline-block;
+  width: 100%;
+  z-index: 10;
+  border-top: 1px solid black;
+}
+
+a {
+	text-decoration: none;
+	font-family: Arial;
+	cursor: pointer;
+}
+
+.controlButton {
+  width: 75px;
+  height: 25px;
+  color: white;
+  font-size: 12px;
+  background: #8b8b8b;
+  padding: 5px 10px 5px 10px;
+  border: 0px;
+  text-decoration: none;
+  float:left;
+  cursor: pointer;
+}
+
+.controlButton:hover {
+  background: #3cb0fd;
+  text-decoration: none;
+}
+
+.dialog textarea {
+    width:100%;
+    height: 100%;
+    padding: 0;
+    border: 1px solid #bbb;
+    font-size: 14px;
+    font-family: "Courier New", Courier, monospace;
+    line-height: 100%;
+    -moz-border-radius: 3px;
+    border-radius: 3px;
+}
+
+  </style>
+</head>
+<body>
+<div id="appdiv"></div>
+</body>
+<script type="text/javascript">
+
+window.requestAnimationFrame = window.requestAnimationFrame || window.mozRequestAnimationFrame ||
+                              window.webkitRequestAnimationFrame || window.msRequestAnimationFrame;
+
+/* ARRAY CONVENIENCE FUNCTIONS */
+
+// Get neighboring cell
+Array.prototype.n = function(direction) {
+	if (this.length != 2) return this;
+	switch(direction) {
+    	case 'U': return [this[0]-1,this[1]];
+		case 'D': return [this[0]+1,this[1]];
+		case 'L': return [this[0],this[1]-1];
+		case 'R': return [this[0],this[1]+1];
+	}
+};
+
+// Shallow check for array equality
+Array.prototype.equals = function(a) {
+	return ( this.length == a.length) &&
+			 this.every(function(e, i) {
+							return e === a[i];
+						});
+};
+
+
+/*================================================================================*/
+
+/***************************************
+*   --------------------------------   *
+*   Ricochet Robots Game Board class   *
+*   --------------------------------   *
+*                                      *
+*       Contains the game model        *
+***************************************/
+
+/* Constructor */
+var Board = function() {
+	// Initialize simple default board
+	this._load({
+		rows: 2,
+		cols: 2,
+		walls: [[' ',' '],
+				[' ','#']],
+		goal: [0,1],
+		robots: [[1,0]]
+	});
+	
+	// the sequence of moves performed
+	// each move is an object with the fields
+	// {robot, direction, startPos, endPos}
+	this.moves = [];
+};
+
+/*
+* Low-level function for loading boardData
+* NO checks are performed.
+*/
+Board.prototype._load = function(boardData) {
+	this.rows = boardData.rows;
+	this.cols = boardData.cols;
+	this.walls = boardData.walls; // this array should probably be copied
+	this.goal = boardData.goal.slice();
+	this.numberOfRobots = boardData.robots.length;
+	this.initialPositions = boardData.robots.slice();
+	
+	// convenience function
+	this.walls.get = function(pos) {
+		return this[pos[0]][pos[1]];
+	};
+};
+
+/*
+* Clear the move sequence
+*/
+Board.prototype.clearMoves = function() {
+	this.moves = [];
+};
+
+/* Primitives */
+Board.prototype.isWall = function(pos) {
+	return this.walls.get(pos) == '#';
+};
+
+/* Returns true if the position is empty 
+* robots is the array of current robot positions
+*/
+Board.prototype.isEmpty = function(pos, robots) {
+	// is there a wall?
+	if (this.isWall(pos)) return false;
+
+	// is there a robot?
+	for (var i=0; i<robots.length; i++) {
+		if (pos.equals(robots[i]))
+			return false;
+	}
+	return true;
+};
+
+/* Returns true if a robot at pos can move one step in direction 
+*  robots is the array of current robot positions
+*/
+Board.prototype.canMove = function(pos, direction, robots) {
+	var n = pos.n(direction); // next position
+
+	// is position outside boundaries?
+	if (n[0] < 0 || n[0] >= this.rows || n[1] < 0 || n[1] >= this.cols)
+		return false;
+
+	// is there a wall or robot?
+	return this.isEmpty(n, robots);
+};
+
+/* Returns true if a robot can move in the specified direction in the specified state */
+Board.prototype.isProperMove = function(robot, direction, pastMoves) {
+	var robotPos = this.getRobotPositions(pastMoves);
+	return this.canMove(robotPos[robot], direction, robotPos);
+};
+
+/*
+* Returns the positions of all robots after pastMoves has performed
+* Returns final positions of robots if pastMoves are not specified
+*
+* TODO: Preprocess for all pastMoves, to make this function
+* return in O(|robots|) time - instead of O(|robots|+totalMoves)
+*/
+Board.prototype.getRobotPositions = function(pastMoves) {
+	if (typeof(pastMoves) == 'undefined') var pastMoves = this.moves.length;
+	var robots = this.initialPositions.slice();
+	for(var i=0; i<pastMoves; i++) {
+		robots[this.moves[i].robot] = this.moves[i].endPos.slice();
+	}
+	// If pastMoves is a fraction, adjust the moving robot's position
+	var lastMove = Math.floor(pastMoves);
+	var fraction = pastMoves-lastMove; // the position of the moving robot between startPos and endPos
+	if (fraction > 0) {
+		var move = this.moves[lastMove];
+		robots[move.robot] = Board.getPosition(move.startPos, move.endPos, fraction);
+	}
+	return robots;
+};
+
+Board.getPosition = function(startPos, endPos, percentage) {
+	var dr = endPos[0] - startPos[0];
+	var dc = endPos[1] - startPos[1];
+	var e = Animation._smooth(percentage);
+	return [startPos[0]+dr*e,startPos[1]+dc*e];
+};
+
+Board.prototype.getRobotPosition = function(robotID, pastMoves) {
+	return this.getRobotPositions(pastMoves)[robotID];
+};
+
+Board.prototype.getRobotAtPosition = function(boardPosition, pastMoves) {
+	var robotPositions = this.getRobotPositions(pastMoves);
+	for (var i=0; i<robotPositions.length; i++) {
+		if (boardPosition.equals(robotPositions[i]))
+			return i;
+	}
+	return null;
+};
+
+/*
+* Appends the move to the end of the move sequence
+* Does not display the move or otherwise change the board state.
+* Returns true, if the move was appended, and false otherwise
+*/
+Board.prototype.appendMove = function(robotID, direction) {
+	var robots = this.getRobotPositions();
+	var endPos = robots[robotID].slice(); // current position of robot
+	while(this.canMove(endPos, direction, robots)) {
+		endPos = endPos.n(direction); // compute endPos
+	}
+	this.moves.push({
+		robot: robotID,
+		direction: direction,
+		startPos: robots[robotID].slice(),
+		endPos: endPos
+	});
+	return true;
+};
+
+
+Board.prototype.appendMoves = function(moves) {
+	// appends each move of the move sequence
+	for (var i=0; i<moves.length; i++) {
+		this.appendMove(moves[i][0],moves[i][1]);
+	}
+};
+
+Board.prototype.isSolved = function(pastMoves) {
+	return this.getRobotPosition(0, pastMoves).equals(this.goal);
+};
+
+/*
+* Parses and loads the specified board file.
+* If a board is loaded successfully, the current move sequence
+* is cleared, and the function will return true.
+* If a parse error is detected, the move sequence is not cleared,
+* and the function will return false. Parse errors are logged to the console.
+*/
+Board.prototype.loadBoardFile = function(boardFileStr) {
+	// error handling function
+	var error = function(msg) {
+		throw 'PARSE ERROR: '+msg;
+	};
+
+	var lines = boardFileStr.split(/\r?\n/);
+	var n = parseInt(lines.shift());
+	if (isNaN(n) || n < 0) error('First line must be a number > 1.');
+	var rows = n;
+	var cols = n;
+	var numberOfRobots = parseInt(lines.shift());
+	if (isNaN(numberOfRobots) || numberOfRobots < 1 || numberOfRobots > 10) error('Second line must be a number from 1-10');
+
+	var goal;
+	var robots = Array.apply(null, Array(numberOfRobots)); // [undefined, undefined, ...]
+	var walls = new Array(rows);
+
+	// Parse board data line by line
+	for (var i=0; i<rows; i++) {
+		var line = lines.shift();
+		walls[i] = new Array(cols);
+		if (!line) error('Expected '+rows+' rows in board, but only found '+i+' rows.');
+		if (line.length < cols) error('Line '+(i+3)+' was too short. Expected '+cols+' symbols, but only found '+line.length+'.');
+		for (var j=0; j<cols; j++) {
+			var c = line[j];
+			switch (c) {
+				case ' ':
+				case '#':
+					walls[i][j] = c;
+					break;
+				case 'G':
+					if (goal) error('More than one goal/goal position defined.');
+					goal = [i,j];
+					walls[i][j] = ' ';
+				 	break;
+				case '0':
+				case '1':
+				case '2':
+				case '3':
+				case '4':
+				case '5':
+				case '6':
+				case '7':
+				case '8':
+				case '9':
+					var r = parseInt(c);
+					if (r >= robots.length)  error('Expected '+numberOfRobots+' robots in the board, but found robot with id '+r+'.');
+					if (robots[r]) error('Robot '+r+' defined more than once in board data.');
+					robots[r] = [i,j];
+					break;
+				default:
+					error('Unexpected symbol '+c+' at (row,col)='+[i,j]+' in board data.');
+			}
+		}
+	}
+
+	// verify that board data contained all expected robots
+	var missingRobot = robots.indexOf(undefined);
+	if (missingRobot >= 0) error('Robot '+missingRobot+' was not present in board data');
+
+	// verify that a goal was found
+	if (!goal) error('No goal was found in board data');
+
+	// everything seems to be fine - load the board
+	var boardData = {
+		rows: rows,
+		cols: cols,
+		walls: walls,
+		robots: robots,
+		goal: goal
+	};
+
+	this._load(boardData);
+	this.clearMoves();
+};
+
+/*
+* Returns the string representation of this board
+* with the initial robot configurations.
+*/
+Board.prototype.saveBoardFile = function() {
+	var boardFile = '';
+	var robots = this.getRobotPositions(0);
+
+	boardFile += this.rows+'\n'; // assumes square boards only
+	boardFile += this.numberOfRobots+'\n';
+	for (var i=0; i<this.rows; i++) {
+		for(var j=0; j<this.cols; j++) {
+			var c = this.walls[i][j]; // symbol to add
+
+			// is the goal on this position?
+			if ([i,j].equals(this.goal)) {
+				c = 'G';
+			} else {
+				// is there a robot on this position?
+				for (var r=0; r<robots.length; r++) {
+					if (robots[r].equals([i,j])) {
+						c = r;
+					}
+				}
+			}
+			boardFile += c;
+		}
+		boardFile += '\n';
+	}
+	return boardFile;
+};
+
+
+/*
+* Parses and loads a sequence of moves.
+* If the non-strict parameter is true, all valid moves up
+* until the first invalid move will be loaded.
+*/
+Board.prototype.loadMoveFile = function(moveFileStr, nonstrict) {
+	if (moveFileStr == null || typeof(moveFileStr) !== 'string') return;
+
+	var moveFileStr = moveFileStr.trim();
+
+	if (moveFileStr === '') {
+		this.clearMoves();
+		return;
+	}
+
+	var validMoves = [];
+
+	var that = this;
+	var success = function() {
+		that.clearMoves();
+		that.appendMoves(validMoves);
+	};
+	var error = function(msg) {
+		if (nonstrict) {
+			success();
+		}
+		throw 'PARSE ERROR: ' + msg;
+	}
+	
+	var tokens = moveFileStr.split(/\s+/);
+	for(var i=0; i<tokens.length; i++) {
+		if (tokens[i].length == 2) {
+			var r = parseInt(tokens[i][0]);
+			var d = tokens[i][1];
+
+			if (isNaN(r) || r < 0 || r >= this.numberOfRobots) {
+				error('Move '+i+' "'+r+d+'" is invalid: No such robot.');
+			}
+			if (['U','D','L','R'].indexOf(d) == -1) {
+				error('Move '+i+' "'+r+d+'" is invalid: Invalid direction.');
+			}
+			validMoves.push([r,d]);
+		} else {
+			// invalid line format
+			error('Move '+i+' "'+tokens[i]+'" is invalid.');
+		}
+	}
+
+	// Append all valid moves
+	success();
+};
+
+
+
+Board.prototype.saveMoveFile = function() {
+	var moveFile = '';
+	for(var i=0; i<this.moves.length; i++) {
+		moveFile += this.moves[i].robot+this.moves[i].direction+'\n';
+	}
+	return moveFile;
+};
+
+
+
+/*================================================================================*/
+
+
+/***************************************
+*   --------------------------------   *
+*      View class for game board       *
+*   --------------------------------   *
+*                                      *
+* Renders the game board on the canvas *
+***************************************/
+var BoardView = function(board, canvas) {
+	this.board = board; // the model
+	this.canvas = canvas; // canvas on which to draw the board
+	this.ctx = canvas.getContext('2d');
+
+	this.selectedRobot = 0;
+	this.pastMoves = 0; // current state of the view (number of past moves performed) - can be a decimal number
+
+	// view options
+	this.robotColors = ['#7FFF00', '#6495ED', 'red', 'yellow', '#A0522D','#FF69B4','#FFD700','olive','slategray','cyan'];
+	this.animationTime = 250; // animation time per move - set to 0 for no animations 
+	
+	var that = this;
+	this.onSolve = function(numberOfMoves) {
+		setTimeout(function(){alert('Well done! You solved it in '+numberOfMoves+' moves!')}, 250);
+	};
+
+	this.repaint();
+};
+
+BoardView.prototype._onStateChange = function(newPastMoves) {
+	console.log(newPastMoves);
+};
+
+// gets canvas position of touch or mouse event
+BoardView.prototype._getCanvasPos = function(e) {
+		var isTouch = {'touchstart':true, 'touchmove':true, 'touchend':true};
+		if (isTouch[e.type]) {
+			e.pageX = e.originalEvent.touches[0].pageX;
+			e.pageY = e.originalEvent.touches[0].pageY;
+		}
+		return [e.pageX - $(this.canvas).position().left, e.pageY - $(this.canvas).position().top];
+};
+
+
+BoardView.prototype._getBoardPos = function(e) {
+	var p = this._getCanvasPos(e);
+	return [Math.floor(p[1]/this.CELLSIZE), Math.floor(p[0]/this.CELLSIZE)];
+};
+
+BoardView.prototype._getTouchedRobot = function(e) {
+	return this.board.getRobotAtPosition(this._getBoardPos(e), this.pastMoves);
+};
+
+BoardView.prototype._addControls = function() {
+	var that = this;
+
+	// moves the selected robot in the direction indicated by the user touch vector
+	var performMove = function() {
+		// minimum distance threshold in pixels for triggering a robot move
+		var MINDIST = 25;
+		if ( that.selectedRobot != undefined && that.touchStartPos != undefined && that.touchCurrentPos != undefined ) {
+			var e = [that.touchCurrentPos[0]-that.touchStartPos[0],that.touchCurrentPos[1]-that.touchStartPos[1]];
+			var direction;
+			if (Math.abs(e[0]) > Math.abs(e[1])) {
+				// move is horizontal
+				if (e[0] < -MINDIST) direction = 'L';
+				if (e[0] > MINDIST) direction = 'R';
+			} else {
+				// move is vertical
+				if (e[1] < -MINDIST) direction = 'U';
+				if (e[1] > MINDIST) direction = 'D';
+			}
+			if (direction) {
+				that.game.move(that.selectedRobot, direction);
+			}
+			that.touchStartPos = undefined;
+			that.touchCurrentPos = undefined;
+		}
+	};
+
+	// touch to select robot
+	$(this.canvas).on('touchstart mousedown', function(e) {
+		if (e.type == 'mousedown' || (e.originalEvent.touches && e.originalEvent.touches.length == 1)) {
+			that.touchStartPos = that._getCanvasPos(e);
+			var touchedRobot = that._getTouchedRobot(e);
+			if (touchedRobot != null) {
+				that.selectedRobot = touchedRobot;
+				that.repaint();
+			}
+		}
+		return false;
+	});
+
+	$(this.canvas).on('touchend touchcancel mouseup mouseout', function(e) {
+		performMove();
+		that.touchStartPos = undefined;
+		that.touchCurrentPos = undefined;
+		that.repaint();
+		return false;
+	});
+
+	$(this.canvas).on('touchmove mousemove', function(e) {
+		// return if not a drag / 1 finger swipe
+		if (!that.touchStartPos || (e.originalEvent.touches && e.originalEvent.touches.length != 1)) return;
+
+		that.touchCurrentPos = that._getCanvasPos(e);
+		that.repaint();
+		e.preventDefault(); // don't propagate event as it will cause the browser to scroll the view
+		return false;
+	});
+};
+
+/*
+* Updates the view to display the board state after
+* pastMoves has been performed. The callBack is invoked
+* when the requested state is obtained. 
+*/
+BoardView.prototype.gotoState = function(newPastMoves, callBack, totalRunTime) {
+	// cancel existing animation
+	if (this.currentAnimation) {
+		this.currentAnimation.cancel();
+	}
+
+	if (this.pastMoves == newPastMoves){
+		// view is already in requested state - abort
+		if (typeof(callBack) == 'function') {
+			callBack();
+		}
+		return; 
+	};
+
+	// Make sure newPastMoves is in the correct range
+	newPastMoves = Math.min(Math.max(0,newPastMoves), this.board.moves.length); 
+
+	// setup animation
+	var oldState = this.pastMoves;
+	var runTime = Math.abs(oldState - newPastMoves)*this.animationTime;
+	if ( totalRunTime != undefined ) {
+		runTime = totalRunTime;
+	}
+	var that = this;
+	this.currentAnimation = new Animation({
+		runTime: runTime,
+		step: function(percentage) {
+			var before = Math.floor(that.pastMoves);
+			that.pastMoves = oldState + percentage*(newPastMoves - oldState);
+			var after = Math.floor(that.pastMoves);
+			if (before != after) {
+				that._onStateChange(after);
+			}
+		},
+		onCancel: function(){
+			if (typeof(callBack) == 'function') callBack();
+		},
+		onFinish: function(){
+			if (typeof(callBack) == 'function') callBack();
+			if (that.board.isSolved(newPastMoves)) that.onSolve(newPastMoves);
+			that.currentAnimation = undefined;
+		},
+		repaint: that.repaint.bind(that)
+	});
+	// start animation
+	this.currentAnimation.start();
+};
+
+/* Stops the current animation gracefully in the next integer state */
+BoardView.prototype.stop = function() {
+	if (this.currentAnimation) {
+		this.gotoState(Math.ceil(this.pastMoves));
+	}
+};
+
+// DRAWING AND ANIMATION METHODS
+
+	/*
+* Draws the board on the canvas
+*/
+BoardView.prototype.repaint = function() {
+	//var timeStart = (new Date()).getMilliseconds();
+
+	var ctx = this.ctx;
+	var rows = this.board.rows;
+	var cols = this.board.cols;
+	var SIZE = Math.min(this.canvas.width/cols, this.canvas.height/rows); // cell size
+	this.CELLSIZE = SIZE; // expose for external use
+	ctx.clearRect(0,0,this.canvas.width, this.canvas.height);
+
+	ctx.fillStyle = "black";
+	ctx.strokeStyle = "#d9d9d9";
+	ctx.lineWidth = 1;
+
+	// stroke rows
+	ctx.beginPath();
+	for (var i=1; i<rows; i++) {
+		ctx.moveTo(0,i*SIZE);
+		ctx.lineTo(cols*SIZE, i*SIZE);
+	}
+	ctx.stroke();
+
+	// stroke cells
+	ctx.beginPath();
+	for (var j=0; j<cols; j++) {
+		ctx.moveTo(j*SIZE, 0);
+		ctx.lineTo(j*SIZE, rows*SIZE);
+	}
+	ctx.stroke();
+
+	
+	// fill walls
+	ctx.beginPath();
+	for(var i=0; i<rows; i++) {
+		for(var j=0; j<cols; j++) {
+            if (this.board.isWall([i,j])) {
+            	ctx.rect(j*SIZE, i*SIZE , SIZE, SIZE);
+            }
+		}
+	}
+	ctx.fill();
+	
+
+	// draw goal
+	ctx.beginPath();
+	var r = this.board.goal[0];
+	var c = this.board.goal[1];
+	ctx.fillStyle = this.robotColors[0];
+	ctx.fillRect(c*SIZE, r*SIZE, SIZE, SIZE);
+
+	
+	/*
+	// draw move paths
+	var moves = this.board.moves;
+	for(var i=0; i<moves.length; i++) {
+		ctx.strokeStyle = this.robotColors[moves[i].robot];
+		var startPos = moves[i].startPos;
+		var endPos = moves[i].endPos;
+		ctx.beginPath();
+		ctx.moveTo((startPos[1]+0.5)*SIZE, (startPos[0]+0.5)*SIZE);
+		ctx.lineTo((endPos[1]+0.5)*SIZE, (endPos[0]+0.5)*SIZE);
+		ctx.stroke();
+	}
+	*/
+	
+	// get positions of robots
+	var robots = this.board.getRobotPositions(this.pastMoves);
+
+	// draw robots
+	for(var i=0; i<robots.length; i++) {
+		var p = robots[i];
+		
+		// fill and stroke robot
+		ctx.beginPath();
+		ctx.fillStyle = this.robotColors[i];
+		ctx.strokeStyle = 'black';
+		ctx.lineWidth = 0.05*SIZE;
+		ctx.arc((p[1]+0.5)*SIZE, (p[0]+0.5)*SIZE, SIZE/2.2, 0, 2*Math.PI);
+		ctx.fill();
+		ctx.stroke();
+
+		// highlight selected robot
+		if (i == this.selectedRobot) {
+			ctx.beginPath();
+			ctx.lineWidth = 0.11*SIZE;
+			ctx.arc((p[1]+0.5)*SIZE, (p[0]+0.5)*SIZE, SIZE/2.5, 0, 2*Math.PI);
+			ctx.stroke();
+		}
+
+		// draw robot number
+		var f = 0.8*SIZE;
+		ctx.fillStyle = 'black';
+		ctx.font = f+'px monospace';
+		ctx.textAlign = 'center';
+		//ctx.textBaseline = 'middle';
+		ctx.fillText(i,(p[1]+0.5)*SIZE,(p[0]+0.5)*SIZE+f/3);
+	}
+
+	// draw user touch vector
+	if (this.touchStartPos != undefined && this.touchCurrentPos != undefined && this.selectedRobot != undefined) {
+		var e = [this.touchCurrentPos[0]-this.touchStartPos[0],this.touchCurrentPos[1]-this.touchStartPos[1]];
+
+		if (Math.abs(e[0]) > Math.abs(e[1])) {
+			e[1] = 0; // project on x axis
+		} else {
+			e[0] = 0; // project onto y-axis
+		}
+		var selectedRobotPos = robots[this.selectedRobot];
+		var fromPos = [(selectedRobotPos[1]+0.5)*SIZE, (selectedRobotPos[0]+0.5)*SIZE];
+		// shorten fromPos by SIZE/2, so the arrow originates next to the robot
+		var l = Math.sqrt(Math.pow(e[0],2)+Math.pow(e[1],2));
+		fromPos = [fromPos[0]+SIZE*e[0]/(2*l), fromPos[1]+SIZE*e[1]/(2*l)];
+		var toPos = [fromPos[0]+e[0], fromPos[1]+e[1]];
+		this._drawArrow(ctx, fromPos, toPos, this.robotColors[this.selectedRobot]);
+	}
+
+	//console.log((new Date()).getMilliseconds()-timeStart);
+};
+
+/* Draws an arrow between two canvas coordinates */
+BoardView.prototype._drawArrow = function(ctx, fromPos, toPos, color) {
+        var vx = toPos[0]-fromPos[0];
+        var vy = toPos[1]-fromPos[1];
+
+        var arrowline_width = Math.min(this.CELLSIZE/3, Math.max(Math.abs(vx), Math.abs(vy))/10);
+        var arrowhead_width = 1.5*arrowline_width;
+        var arrowhead_length = 1.5*arrowhead_width;
+        
+        var ctrlPt = [fromPos[0]+vx/2, fromPos[1]+vy/2];
+        var tl = Math.sqrt(Math.pow(toPos[0]-ctrlPt[0],2)+Math.pow(toPos[1]-ctrlPt[1],2));
+        var tdx = (toPos[0]-ctrlPt[0])/tl; // toPos-ctrlPt unit vector
+        var tdy = (toPos[1]-ctrlPt[1])/tl;
+        
+        // arrow line
+        ctx.beginPath();
+        ctx.strokeStyle = color;
+        ctx.lineWidth = arrowline_width;
+        ctx.moveTo(fromPos[0],fromPos[1]);
+        ctx.lineTo(toPos[0]-arrowhead_length*tdx/2, toPos[1]-arrowhead_length*tdy/2);
+        ctx.stroke();
+        
+        // arrow head
+        ctx.fillStyle = color;
+        ctx.lineWidth = 1;
+        //ctx.beginPath();
+        ctx.moveTo(toPos[0]-arrowhead_length*tdx/1.5,toPos[1]-arrowhead_length*tdy/1.5);
+        ctx.lineTo(toPos[0]-arrowhead_length*tdx-arrowhead_width*tdy,toPos[1]-arrowhead_length*tdy+arrowhead_width*tdx);
+        ctx.lineTo(toPos[0],toPos[1]);
+        ctx.lineTo(toPos[0]-arrowhead_length*tdx+arrowhead_width*tdy,toPos[1]-arrowhead_length*tdy-arrowhead_width*tdx);
+        ctx.closePath();
+        ctx.fill();
+};
+
+
+/*================================================================================*/
+
+
+/*
+* Animation class
+* 1. The step function is invoked repeatedly until time has passed.
+* The step function is called with an argument indicating the percentage completed.
+* It is guarenteed that the last call made to step is step(1)
+*/
+var Animation = function(config) {
+	this.step = config.step;
+	this.runTime = config.runTime;
+	this._repaint = function() { if( typeof(config.repaint) == 'function') config.repaint(); };
+	this._onStart = function() { if( typeof(config.onStart) == 'function') config.onStart.bind(this)(); };
+	this._onFinish = function() { if( typeof(config.onFinish) == 'function') config.onFinish.bind(this)(); };
+	this._onCancel = function() { if( typeof(config.onCancel) == 'function') config.onCancel.bind(this)(); };
+};
+
+Animation.prototype._animate = function() {
+	if (this._cancelNow) {
+		this._onCancel();
+		return; // animation was cancelled
+	}	
+	var p = this.runTime <= 0 ? 1 : ((new Date().getTime()) - this.startTime)/this.runTime;
+	if (p < 1) {
+		this.step(p);
+		this._repaint(); // repaint the view
+		window.requestAnimationFrame(this._animate.bind(this)); // animate again
+	} else {
+		this.step(1); // animation has stopped
+		this._repaint(); // repaint the view
+		this._onFinish();
+	}
+};
+
+Animation.prototype.start = function() {
+	this.startTime = new Date().getTime();
+	this._onStart();
+	this._animate();
+};
+
+/*
+* Returns a new animation, which is the concatenation
+* of this animation and the provided animation.
+* I.e., the two animations are combined in series.
+*/
+Animation.prototype.join = function(animation) {
+	var _onFinish = this._onFinish;
+	var animationStart = animation.start.bind(animation);
+	// make this animation start the other animation when its done
+	this._onFinish = function() {
+		_onFinish(); // old callBack
+		animationStart(); // start new animation
+	};
+	// make the two animations appear as one
+	animation.start = this.start.bind(this);
+	this.join = animation.join.bind(animation);
+
+	return animation;
+};
+
+/*
+* Returns a new animation, which is the merge
+* of this animation and the provided animation.
+* I.e., the two animations are combined in parallel
+*/
+Animation.prototype.merge = function(animation) {
+// TODO
+};
+
+Animation.prototype.cancel = function() {
+	this._cancelNow = true;
+	//window.cancelAnimationFrame(this._animate);
+	//this._onFinish();
+};
+
+// Convenience functions
+Animation._smooth = function(p) {
+        return (2*p*Math.PI-Math.sin(2*p*Math.PI))/(2*Math.PI);
+};
+
+/*================================================================================*/
+
+
+/*
+* Main game class
+*
+* Initializes a game in the specified div
+*/
+var RRGame = function(div) {
+  this.app = div;
+  this._initView(); // sets up the canvas, sidebar, etc.
+
+  this.board = new Board();
+  this.boardView = new BoardView(this.board, this.canvas);
+  this.boardView.game = this;
+
+  this._addControls();
+  var that = this;
+  this.boardView._onStateChange = function(newState) {
+  	that.movesList.children().slice(0,newState+1).addClass('selected');
+  	that.movesList.children().slice(newState+1).removeClass('selected');
+
+  	// scroll move list if necessary
+  	var liTop = that.movesList.children().eq(newState).position().top;
+  	var viewHeight = that.movesListWrapper.height();
+  	that.movesListWrapper.scrollTop(that.movesListWrapper.scrollTop()-(viewHeight/2-liTop));
+  };
+
+  this._resize();
+};
+
+RRGame.prototype._initView = function() {
+  this.canvasWrapper = $('<div>').addClass('canvaswrapper');
+  this.canvas = document.createElement('canvas');
+  this.canvasWrapper.html(this.canvas);
+
+  // sidebar
+  this.sidebar = $('<div>').addClass('sidebar');
+  this.controls = $('<div>').addClass('controls');
+
+  // create control buttons
+  this.prevButton = $('<button>').addClass('controlButton').text('Previous');
+  this.nextButton = $('<button>').addClass('controlButton').text('Next');
+  this.playButton = $('<button>').addClass('controlButton').text('Play');
+  this.resetButton = $('<button>').addClass('controlButton').text('Reset');
+
+  // add controls buttons
+  this.controls.append(this.prevButton);
+  this.controls.append(this.nextButton);
+  this.controls.append(this.playButton);
+  this.controls.append(this.resetButton);
+
+  // add controls
+  this.sidebar.append(this.controls);
+
+  // create moves list
+  this.movesListWrapper = $('<div>').addClass('moveslistwrapper moveslist');
+  this.movesList = $('<ul>');
+  this.movesList.append($('<li><a>Initial State</a></li>').addClass('selected'));
+
+  this.movesListWrapper.html(this.movesList);
+
+  this.sidebar.append(this.movesListWrapper);
+
+   // menu
+  //this.menuWrapper = $('<div><a>More options</a></div>').addClass('menuWrapper');
+  this.optionsMenu = $('<div>').addClass('optionsMenu');
+  //this.menu = $('<div>').addClass('menu');
+  this.boardDialogButton = $('<button>').addClass('controlButton').text('Board file');
+  this.moveDialogButton = $('<button>').addClass('controlButton').text('Move file');
+  this.urlButton = $('<button>').addClass('controlButton').text('Get URL');
+  this.clearMovesButton = $('<button>').addClass('controlButton').text('Clear moves');
+
+  this.optionsMenu.append(this.boardDialogButton);
+  this.optionsMenu.append(this.moveDialogButton);
+  this.optionsMenu.append(this.urlButton);
+  this.optionsMenu.append(this.clearMovesButton);
+  this.sidebar.append(this.optionsMenu);
+  
+  var that = this;
+
+  // dialogs
+  this.boardDialog = $('<div><textarea class="codetext" rows="10" cols="50"></textarea></div>').dialog({
+  			   title: 'Board File',
+               autoOpen: false,
+               width: 520,
+               height: 400,
+               maxHeight: 0.75*$(window).height(),
+               modal: true,
+               buttons: [
+					    {
+					      text: "Load board",
+					      click: function() {
+					      	var boardFile = $(this).children('textarea').val();
+					      	try {
+					      		that.loadBoardFile(boardFile);
+					      		$(this).dialog( "close" );
+					      	} catch (errorMsg) {
+					      		alert(errorMsg);
+					      	}
+					      }
+					    },
+					     {
+					      text: "Cancel",
+					      click: function() {
+					        $(this).dialog( "close" );
+					      }
+					    }
+					  ],
+				open: function(event, ui) {
+					$(this).children('textarea').val(that.board.saveBoardFile());
+				},
+				dialogClass: 'dialog'
+   });
+
+  this.moveDialog = $('<div><textarea class="codetext" rows="10" cols="50"></textarea></div>').dialog({
+  			   title: 'Move File',
+               autoOpen: false,
+               width: 520,
+               height: 400,
+               maxHeight: 0.75*$(window).height(),
+               modal: true,
+               buttons: [
+					    {
+					      text: "Load moves",
+					      click: function() {
+					      	var moveFile = $(this).children('textarea').val();
+					      	try {
+					      		that.loadMoveFile(moveFile);
+					      		$(this).dialog( "close" );
+					      	} catch (errorMsg) {
+					      		alert(errorMsg);
+					      	}
+					      }
+					    },
+					     {
+					      text: "Cancel",
+					      click: function() {
+					        $(this).dialog( "close" );
+					      }
+					    }
+					  ],
+				open: function(event, ui) {
+					$(this).children('textarea').val(that.board.saveMoveFile());
+				},
+				dialogClass: 'dialog'
+   });
+
+	this.confirmDialog = $('<div>').dialog({
+  			   title: 'Please confirm',
+               autoOpen: false,
+               width: 520,
+               height: 'auto',
+               modal: true,
+			   dialogClass: 'dialog'
+   });
+
+
+  // add elements to DOM
+  $(this.app).html(this.canvasWrapper);
+  $(this.app).append(this.sidebar);
+};
+
+RRGame.prototype._resize = function() {
+  var sidebarWidth = this.sidebar.outerWidth();
+  var controlsHeight = this.controls.outerHeight();
+
+  var maxHeight = $(window).height();
+  var maxWidth = $(window).width();
+  var canvasSize = Math.min(maxWidth-sidebarWidth, maxHeight)-4;
+
+  // update all variable dimensions of view
+  this.app.height(canvasSize);
+  this.app.width(canvasSize+sidebarWidth);
+  this.canvas.height = canvasSize;
+  this.canvas.width = canvasSize;
+  this.canvasWrapper.width(canvasSize);
+  this.canvasWrapper.height(canvasSize);
+  this.controls.height(controlsHeight);
+  this.movesListWrapper.height(canvasSize-controlsHeight);
+
+  this.boardView.repaint();
+};
+
+RRGame.prototype._addControls = function() {
+	var that = this;
+	this.prevButton.click(function(){
+		that.previous();
+		return false;
+	});
+	this.nextButton.click(function(){
+		that.next();
+		return false;
+	});
+	this.playButton.click(function(){
+		that.togglePlay();
+		return false;
+	});	
+	this.resetButton.click(function(){
+		that.reset();
+		return false;
+	});
+
+	var that = this;
+
+	// moveslist click events
+	this.movesListWrapper.on('click', 'li', function(e){
+		that.gotoState($(this).index(), null, 0);
+		return false;
+	});
+
+	this.boardDialogButton.click(function(){
+		that.boardDialog.dialog('open');
+		return false;
+	});
+
+	this.moveDialogButton.click(function(){
+		that.moveDialog.dialog('open');
+		return false;
+	});
+
+	this.urlButton.click(function(){
+		window.open(that.getURL(), '_blank');
+		return false;
+	});
+
+	this.clearMovesButton.click(function(){
+		that.clearMoves();
+		return false;
+	});
+
+	// add controls to BoardView
+	this.boardView._addControls();
+	
+	// add keyboard events
+	$(window).keydown(function(e){
+		// Ignore keypress if dialog is open
+		if (that.boardDialog.dialog('isOpen') || that.moveDialog.dialog('isOpen') || that.confirmDialog.dialog('isOpen')) return;
+
+		var dir;
+    	switch(e.which) {
+            case 37: dir = 'L'; break;
+            case 38: dir = 'U'; break;
+            case 39: dir = 'R'; break;
+            case 40: dir = 'D'; break;
+            default:
+            	var r = parseInt(String.fromCharCode(e.which));
+            	if (r >= 0 && r < that.board.numberOfRobots) {
+            		that.boardView.selectedRobot = r;
+            		that.boardView.repaint();
+            	}
+        }
+        if (dir) {
+        	that.move(that.boardView.selectedRobot, dir);
+        	return false; // stop event propagation to prevent window scroll
+        } else {
+        	//console.log(e.which);
+        }
+    });
+
+    // resize window handler
+    $(window).resize(this._resize.bind(this));
+};
+
+RRGame.prototype.loadBoardFile = function(boardFileStr) {
+	this.board.loadBoardFile(boardFileStr);
+	this.clearMoves();
+	this.boardView.repaint();
+};
+
+RRGame.prototype.loadMoveFile = function(moveFileStr, nonstrict) {
+	this.board.loadMoveFile(moveFileStr, nonstrict);
+	this.reset(0);
+	this._updateMovesList();
+}
+
+RRGame.prototype._updateMovesList = function() {
+	this.movesList.children().slice(1).remove(); // clear the moves list
+
+	for (var i=0; i<this.board.moves.length; i++) {
+		// add move to movesList
+		var r = this.board.moves[i].robot;
+		var d = this.board.moves[i].direction;
+		this.movesList.append($('<li><a>'+(i+1)+': '+r+d+'</a></li>'));
+	}
+}
+
+/* Clears the moves of the current board */
+RRGame.prototype.clearMoves = function() {
+	this.reset(0); // reset the view
+	this.movesList.children().slice(1).remove(); // clear the moves list
+	this.board.clearMoves(); // clear the model
+};
+
+
+RRGame.prototype.gotoState = function(newPastMoves, callBack, runTime) {
+	this.boardView.gotoState(newPastMoves, callBack, runTime);
+};
+
+RRGame.prototype.togglePlay = function() {
+	var that = this;
+	var done = function() {
+		that.playButton.text('Play');
+	};
+
+	if(this.playButton.text() == 'Play') {
+		this.playButton.text('Stop');
+		this.gotoState(this.board.moves.length, done);
+	} else {
+		this.boardView.stop();
+		done();
+	}
+};
+
+RRGame.prototype.next = function() {
+	this.gotoState(Math.floor(this.boardView.pastMoves+1));
+};
+
+RRGame.prototype.previous = function() {
+	this.gotoState(Math.floor(this.boardView.pastMoves-1));
+};
+
+RRGame.prototype.reset = function() {
+	this.gotoState(0, null, 0);
+};
+
+RRGame.prototype.clearMoves = function() {
+	this.loadMoveFile('');
+};
+
+RRGame.prototype.askUser = function(question, onConfirm, onCancel) {
+
+	this.confirmDialog.html(question).dialog({
+		               buttons: [
+					    {
+					      text: "Yes",
+					      click: function() {
+					      		$(this).dialog( "close" );
+					      		if (typeof(onConfirm) == 'function') onConfirm();
+					      }
+					    },
+					     {
+					      text: "Cancel",
+					      click: function() {
+					        	$(this).dialog( "close" );
+					        	if (typeof(onCancel) == 'function') onCancel();
+					      }
+					    }
+					  ]
+	});
+
+	this.confirmDialog.dialog('open');
+
+
+};
+
+RRGame.prototype.move = function(robotID, direction, callBack) {
+	var cb = function() {
+		if (typeof(callBack) === 'function') callBack();
+	};
+	// abort if the robot is unable to move in the specified direction
+	if (!this.board.isProperMove(robotID, direction, this.boardView.pastMoves) || this.boardView.currentAnimation) {
+		return;
+	};
+
+	var that = this;
+	var performMove = function() {
+		// is board in most recent state?
+		if (that.boardView.pastMoves != that.board.moves.length) {
+			// delete all moves after the current state
+			var currentMove = Math.floor(that.boardView.pastMoves);
+			that.board.moves = that.board.moves.slice(0,currentMove); // update model
+			that._updateMovesList(); // update moves list
+		}
+		
+
+		// then append the new move
+	    that.board.appendMove(robotID, direction);
+	    var n = that.board.moves.length;
+	    that.movesList.append($('<li><a>'+n+': '+robotID+direction+'</a></li>'));
+	    that.gotoState(that.board.moves.length, cb);
+	};
+
+	if (this.boardView.pastMoves != this.board.moves.length) {
+		// ask user if he really wants to perform this move...
+		this.askUser('Are you sure you want to move robot '+robotID+'? This will delete all moves after the current move.', performMove);
+	} else {
+		performMove();
+	}
+	
+};
+
+// Randomily selects and moves the robots around
+RRGame.prototype.demo = function() {
+	//this.boardView.selectedRobot = Math.floor(this.board.numberOfRobots*Math.random());
+	var dir = ['U','D','L','R'][Math.floor(Math.random()*4)];
+	this.move(Math.floor(this.board.numberOfRobots*Math.random()), dir);
+	//setInterval(this.demo.bind(this), 1000);
+};
+
+RRGame.prototype.getURL = function() {
+	var state = {
+		board: this.board.saveBoardFile(),
+		moves: this.board.saveMoveFile(),
+		pastMoves: Math.floor(this.boardView.pastMoves)
+	};
+	var j = window.location.href.indexOf('#');
+	return window.location.href.slice(0,j < 0 ? window.location.href.length : j)+'#'+encodeURIComponent(JSON.stringify(state));
+};
+
+RRGame.prototype.loadURL = function() {
+		if (window.location.href.indexOf('#') < 0) throw 'URL contains no board data';
+		var data = window.location.href.slice(window.location.href.indexOf('#')+1);
+		var state = JSON.parse(decodeURIComponent(data));
+		this.loadBoardFile(state.board);
+		this.loadMoveFile(state.moves);
+		this.gotoState(state.pastMoves, null, 0);
+};
+
+
+
+/*
+* Really dirty random board generator
+* Does not guarentee the existence of a solution
+* - In fact it's not even guarenteed to terminate...
+*/
+RRGame.prototype.loadRandomBoard = function(size, numberOfRobots) {
+	var rows = size;
+	var cols = size;
+	var boardData = {
+		rows: rows,
+		cols: cols,
+		walls: [],
+		goal: [],
+		robots: []
+	};
+	// create random walls
+	boardData.walls = new Array(rows);
+	for(var i=0; i<rows; i++) {
+		boardData.walls[i] = new Array(cols);
+		for(var j=0; j<cols; j++) {
+			boardData.walls[i][j] = Math.random() < 0.88 ? ' ' : '#';
+		}
+	}
+
+	// place goal
+	var r = Math.floor(Math.random()*rows);
+	var c = Math.floor(Math.random()*cols);
+	boardData.walls[r][c] = ' ';
+	boardData.goal = [r,c];
+
+	// place robots
+	for(var i=0; i<numberOfRobots; i++) {
+		var r;
+		var c;
+		do {
+			r = Math.floor(Math.random()*rows);
+			c = Math.floor(Math.random()*cols);
+		} while(boardData.goal.equals([r,c]) || boardData.robots.some(function(e){return e.equals([r,c])}));
+		boardData.walls[r][c] = ' ';
+		boardData.robots.push([r,c]);
+	}
+
+	// create test board for simulating moves
+	var simBoard = new Board();
+	simBoard._load(boardData);
+
+	this.board._load(boardData);
+	this.boardView.repaint();
+};
+
+
+
+var happyfaceBoard =
+'13\n\
+2\n\
+             \n\
+             \n\
+ ###     ### \n\
+  0       1  \n\
+             \n\
+      G      \n\
+      #      \n\
+     ###     \n\
+             \n\
+ #         # \n\
+  #       #  \n\
+   #######   \n\
+             \n\
+';
+
+var lonelyrobotsBoard =
+'13\n\
+3\n\
+1           2\n\
+             \n\
+             \n\
+             \n\
+             \n\
+      0      \n\
+      G      \n\
+             \n\
+             \n\
+             \n\
+             \n\
+             \n\
+             \n\
+';
+
+var robotceptionBoard = 
+'29\n\
+8\n\
+          0123 4567          \n\
+ ############# ############# \n\
+ #                         # \n\
+ # ####################### # \n\
+ # #                     # # \n\
+ # # ######### ######### # # \n\
+ # # #                 # # # \n\
+ # # # ############### # # # \n\
+ # # # #             # # # # \n\
+ # # # # ##### ##### # # # # \n\
+ # # # # #         # # # # # \n\
+ # # # # # ####### # # # # # \n\
+ # # # # # #     # # # # # # \n\
+ # # # # # # # # # # # # # # \n\
+ # # # # # # #G# # # # # # # \n\
+ # # # # # # ### # # # # # # \n\
+ # # # # # #     # # # # # # \n\
+ # # # # # ### ### # # # # # \n\
+ # # # # #         # # # # # \n\
+ # # # # ########### # # # # \n\
+ # # # #             # # # # \n\
+ # # # ####### ####### # # # \n\
+ # # #                 # # # \n\
+ # # ################### # # \n\
+ # #                     # # \n\
+ # ########### ########### # \n\
+ #                         # \n\
+ ########################### \n\
+                             \n\
+                             ';
+
+var ffffBoard = 
+'14\n\
+4\n\
+0 1#      #   \n\
+   #      #   \n\
+   #      #   \n\
+   ###  ###   \n\
+   #      #   \n\
+   ###  ###   \n\
+              \n\
+              \n\
+   ###  ###   \n\
+   #G     #   \n\
+   ###  ###   \n\
+   #      #   \n\
+   #      #   \n\
+2 3#      #   \n\
+';
+
+var ffffSolution38 = '1D\n2U\n2R\n1U\n3U\n0D\n3L\n1D\n2D\n0U\n0R\n2U\n1U\n3D\n3R\n3U\n1R\n2D\n2R\n0D\n3R\n2L\n1L\n1D\n3L\n2R\n0R\n3U\n0L\n0D\n2L\n2D\n1R\n3D\n1L\n2U\n0U\n0L';
+
+// init new game in div
+var game = new RRGame($('#appdiv'));
+
+// CodeJudge hooks
+var input = "%%%CJ:input%%%";
+var output = "%%%CJ:output%%%";
+//game.loadBoardFile(input);
+//game.loadMoveFile(output, true);
+
+// load default board
+//game.loadBoardFile(ffffBoard);
+game.loadRandomBoard(10,4);
+//game.loadMoveFile(ffffSolution38);
+//game.loadBoardFile(happyfaceBoard);
+//game.loadBoardFile(lonelyrobotsBoard);
+//game.loadBoardFile(robotceptionBoard);
+
+//$.get( "../boards/random_boards/3_hard/n=80___robots=8___possible_in_5_moves.txt", function( data ) {
+//  game.loadBoardFile(data);
+//});
+
+if (window.location.href.indexOf('#') >= 0) {
+	// Try to load game state from URL
+	try {
+		game.loadURL();
+	} catch (e) {
+		alert(e);
+	}
+}
+
+
+</script>
+</html>

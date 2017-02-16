@@ -1,0 +1,1228 @@
+use std::collections::HashMap;
+use std::collections::HashSet;
+use std::collections::VecDeque;
+use std::collections::BinaryHeap;
+
+use std::io::{self, Read};
+use std::fmt;
+use std::str::FromStr;
+use std::path::Path;
+
+use std::cmp::Ordering;
+use std::u32;
+use std::iter::FromIterator;
+use std::hash::{Hash, Hasher};
+
+const WALL_CHAR: char = '#';
+const GOAL_CHAR: char = 'G';
+const EMPTY_CHAR: char = ' ';
+
+pub const MAX_ROBOTS: usize = 10;
+
+type Robot = u8;
+pub type Pos = u32;
+
+pub type Robots = [Pos; MAX_ROBOTS];
+
+pub type Solution = Vec<Move>;
+
+/// Two intended types for T:
+/// - bool: The raw board as read from input, true index has a wall
+/// - Endpoints: What indices can be reached from each index in each direction, disregarding where the robots are placed
+pub struct Board<T> {
+    board: Box<[T]>,
+    robots: Robots,
+    goal: Pos,
+    size: Pos,
+    robots_len: u8,
+}
+
+/// Where will you end up by going in each direction
+#[derive(Debug, Clone, Copy)]
+pub struct Endpoints {
+    up: Pos,
+    right: Pos,
+    down: Pos,
+    left: Pos,
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum Direction {
+    Up    = 0b0001,
+    Right = 0b0010,
+    Down  = 0b0100,
+    Left  = 0b1000,
+}
+
+/// Move a robot to an index and remember the direction for reconstructing the solution
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub struct Move {
+    to: Pos,
+    robot: Robot,
+    dir: Direction,
+}
+
+/// Compact representation of a Move
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub struct MoveLite(u8);
+
+/// Iterative Deepening Depth-First Search
+pub fn ids(board: &Board<Endpoints>) -> Solution {
+    let mut depth = 0;
+
+    // Preallocate vectors for holding possible moves at each depth
+    let mut moves_vecs: Vec<Vec<Move>> = vec![
+        Vec::with_capacity(4 * board.robots_len as usize);
+        depth as usize
+    ];
+
+    let mut seen = HashMap::default();
+
+    loop {
+        println!("DEPTH: {}", depth);
+
+        if let Some(mut result) =
+            depth_limited_search(board, depth, &mut moves_vecs, &mut seen)
+        {
+            result.reverse();
+            return result;
+        }
+
+        depth += 1;
+        moves_vecs.push(Vec::with_capacity(4 * board.robots_len as usize));
+    }
+}
+
+/// Depth-first search to a given limit
+fn depth_limited_search
+    (board: &Board<Endpoints>,
+     limit: u8,
+     moves: &mut [Vec<Move>],
+     seen: &mut HashMap<Robots, u8>)
+     -> Option<Solution> {
+
+    recursive_dls(board, board.robots, limit, moves, seen)
+}
+
+/// The actual search
+fn recursive_dls
+    (board: &Board<Endpoints>,
+     state: Robots,
+     limit: u8,
+     moves_vecs: &mut [Vec<Move>],
+     seen: &mut HashMap<Robots, u8>)
+     -> Option<Solution> {
+    if state[0] == board.goal {
+        println!("STATES SEEN: {}", seen.len());
+        Some(vec![])
+    } else if limit == 0 {
+        None
+    } else {
+        let mut state_seen = state;
+        &mut state_seen[1..board.robots_len as usize].sort();
+
+        if *seen.get(&state_seen).unwrap_or(&0) >= limit {
+            return None;
+        } else {
+            seen.insert(state_seen, limit);
+
+            let (mut moves, rest) = moves_vecs.split_first_mut().unwrap();
+
+            moves.clear();
+            board.possible_moves(state, &mut moves);
+
+            for action in moves {
+                let mut child = state;
+                child[action.robot as usize] = action.to;
+
+                let result = recursive_dls(board, child, limit-1, rest, seen);
+
+                if let Some(mut res) = result {
+                    res.push(action.clone());
+                    return Some(res);
+                }
+            }
+
+            None
+        }
+    }
+}
+
+struct BFSNode {
+    robots: Robots,
+    move_idx: u32,
+}
+
+fn solution(moves: &[MoveLite], moves_indices: &[u32]) -> Vec<MoveLite> {
+    let mut sol = Vec::new();
+
+    let mut m = moves[moves.len()-1];
+    let mut idx = moves_indices[moves_indices.len()-1] as usize;
+
+    while idx > 0 {
+        sol.push(m);
+        m = moves[idx];
+        idx = moves_indices[idx] as usize;
+    }
+
+    sol.push(m);
+
+    sol.reverse();
+    sol
+}
+
+pub fn bfs(board: &Board<Endpoints>) -> Option<Vec<MoveLite>> {
+    let initial = BFSNode {
+        robots: board.robots,
+        move_idx: 0,
+    };
+
+    let mut frontier = VecDeque::new();
+    let mut in_frontier = HashSet::new();
+    let mut explored = HashSet::new();
+
+    frontier.push_back(initial);
+
+    let mut moves: Vec<MoveLite> = Vec::new();
+    let mut moves_indices: Vec<u32> = Vec::new();
+
+    moves.push(MoveLite::new(MAX_ROBOTS as u8, Direction::Up));
+    moves_indices.push(0);
+
+    let mut possible_moves = Vec::with_capacity(4 * board.robots_len as usize);
+
+    while let Some(node) = frontier.pop_front() {
+        let mut state_seen = node.robots;
+        &mut state_seen[1..board.robots_len as usize].sort();
+
+        in_frontier.remove(&state_seen);
+        explored.insert(state_seen);
+
+        possible_moves.clear();
+        board.possible_moves(node.robots, &mut possible_moves);
+
+        for &m in &possible_moves {
+            let mut child = BFSNode {
+                robots: node.robots,
+                move_idx: moves.len() as u32,
+            };
+
+            child.robots[m.robot as usize] = m.to;
+
+            let mut child_state_seen = child.robots;
+            &mut child_state_seen[1..board.robots_len as usize].sort();
+
+            if !explored.contains(&child_state_seen) &&
+                !in_frontier.contains(&child_state_seen)
+            {
+                moves.push(MoveLite::new(m.robot, m.dir));
+                moves_indices.push(node.move_idx);
+
+                if child.robots[0] == board.goal {
+                    // println!("EXPLORED STATES: {}", explored.len());
+                    // println!("FRONTIER STATES: {}", frontier.len());
+                    return Some(solution(&moves, &moves_indices));
+                }
+
+                in_frontier.insert(child_state_seen);
+                frontier.push_back(child);
+            }
+        }
+    }
+
+    None
+}
+
+fn astar_solution(
+    mut idx: usize,
+    moves: &[MoveLite],
+    moves_indices: &[u32],
+) -> Vec<MoveLite> {
+    let mut sol = Vec::new();
+
+    let mut m = moves[idx];
+    idx = moves_indices[idx] as usize;
+
+    while idx > 0 {
+        sol.push(m);
+        m = moves[idx];
+        idx = moves_indices[idx] as usize;
+    }
+
+    sol.push(m);
+
+    sol.reverse();
+    sol
+}
+
+#[derive(Debug, Clone)]
+pub struct AStarNode {
+    state: Robots,
+    symmetry: Robots,
+    path_cost: u32,
+    estimated_cost: u32,
+    move_idx: u32,
+}
+
+impl PartialEq for AStarNode {
+    fn eq(&self, other: &Self) -> bool {
+        self.symmetry == other.symmetry
+    }
+}
+
+impl Eq for AStarNode {}
+
+impl Hash for AStarNode {
+    fn hash<H: Hasher>(&self, state: &mut H) {
+        self.symmetry.hash(state);
+    }
+}
+
+impl PartialOrd for AStarNode {
+    fn partial_cmp(&self, other: &Self) -> Option<Ordering> {
+        Some(self.cmp(other))
+    }
+}
+
+impl Ord for AStarNode {
+    fn cmp(&self, other: &Self) -> Ordering {
+        self.estimated_cost.cmp(&other.estimated_cost)
+    }
+}
+
+fn astar_child_node(
+    dists: &Vec<(u32, Vec<Pos>)>,
+    parent: &AStarNode,
+    action: Move,
+    robots_len: u8,
+    move_idx: u32,
+) -> AStarNode {
+    let mut state = parent.state;
+    state[action.robot as usize] = action.to;
+
+    let mut symmetry = state;
+    &mut symmetry[1..robots_len as usize].sort();
+
+    let (dist, ref spots) = dists[state[0] as usize];
+
+    let other_bots = &state[1..robots_len as usize];
+
+    let covered = spots
+        .iter()
+        .filter(|spot| other_bots.contains(spot))
+        .count();
+
+    let uncovered = (spots.len() - covered) as u32;
+
+    let path_cost = parent.path_cost + 1;
+
+    AStarNode {
+        state: state,
+        symmetry: symmetry,
+        estimated_cost: path_cost + dist + uncovered,
+        path_cost: path_cost,
+        move_idx: move_idx,
+    }
+}
+
+pub fn astar(
+    board: &Board<Endpoints>,
+    dists: &Vec<(u32, Vec<Pos>)>
+) -> Option<Vec<MoveLite>>
+{
+    let mut symmetry = board.robots;
+    &mut symmetry[1..board.robots_len as usize].sort();
+
+    let initial = AStarNode {
+        state: board.robots,
+        symmetry: symmetry,
+        path_cost: 0,
+        estimated_cost: 0,
+        move_idx: 0,
+    };
+
+    let mut frontier = Heap::new();
+
+    let mut explored = HashSet::new();
+
+    let mut moves: Vec<MoveLite> = Vec::new();
+    let mut moves_indices: Vec<u32> = Vec::new();
+
+    moves.push(MoveLite::new(MAX_ROBOTS as u8, Direction::Up));
+    moves_indices.push(0);
+
+    let mut possible_moves = Vec::with_capacity(4 * board.robots_len as usize);
+
+    frontier.insert(initial);
+
+    while let Some(node) = frontier.extract_min() {
+        explored.insert(node.symmetry);
+
+        if node.state[0] == board.goal {
+            return Some(astar_solution(
+                node.move_idx as usize, &moves, &moves_indices
+            ));
+        }
+
+        possible_moves.clear();
+        board.possible_moves(node.state, &mut possible_moves);
+
+        for m in possible_moves.iter().cloned() {
+            let child = astar_child_node(dists, &node, m, board.robots_len, moves.len() as u32);
+
+            if !explored.contains(&child.symmetry) &&
+                !frontier.contains(&child.symmetry)
+            {
+                moves.push(MoveLite::new(m.robot, m.dir));
+                moves_indices.push(node.move_idx);
+
+                frontier.insert(child);
+            } else {
+                if frontier.replace_smaller(child.clone()) {
+                    moves.push(MoveLite::new(m.robot, m.dir));
+                    moves_indices.push(node.move_idx);
+                }
+            }
+        }
+    }
+
+    None
+}
+
+#[derive(Debug, Clone)]
+struct Node {
+    state: Robots,
+    action: Move,
+    estimated_cost: u32,
+}
+
+impl PartialEq for Node {
+    fn eq(&self, other: &Node) -> bool {
+        self.state == other.state
+    }
+}
+
+impl Eq for Node {}
+
+impl PartialOrd for Node {
+    fn partial_cmp(&self, other: &Node) -> Option<Ordering> {
+        Some(self.cmp(other))
+    }
+}
+
+impl Ord for Node {
+    fn cmp(&self, other: &Node) -> Ordering {
+        // Compare in reverse order to get a min heap
+        other.estimated_cost.cmp(&self.estimated_cost)
+    }
+}
+
+fn child_node(
+    dists: &Vec<(u32, Vec<Pos>)>,
+    parent: &Node,
+    action: Move,
+    depth: u32,
+    robots_len: u8,
+) -> Node {
+    let mut state = parent.state;
+    state[action.robot as usize] = action.to;
+
+    let (dist, ref spots) = dists[state[0] as usize];
+
+    let other_bots = &state[1..robots_len as usize];
+
+    let covered = spots
+        .iter()
+        .filter(|spot| other_bots.contains(spot))
+        .count();
+
+    let uncovered = spots.len() - covered;
+
+    Node {
+        state: state,
+        action: action,
+        estimated_cost: depth + 1 + dist + uncovered as u32,
+    }
+}
+
+pub fn recursive_best_first_search(
+    board: &Board<Endpoints>,
+    dists: &Vec<(u32, Vec<Pos>)>
+) -> Option<Vec<Move>> {
+    let mut state_seen = board.robots;
+    &mut state_seen[1..board.robots_len as usize].sort();
+
+    let initial = Node {
+        state: board.robots,
+        action: Move::new(MAX_ROBOTS as u8, 0, Direction::Up),
+        estimated_cost: dists[board.robots[0] as usize].0,
+    };
+
+    let mut seen = HashMap::new();
+    let mut moves = Vec::with_capacity(4*board.robots_len as usize);
+
+    let mut nodes_vecs = vec![
+        Vec::with_capacity(4 * board.robots_len as usize);
+        100
+    ];
+
+    rbfs(board, dists, &initial, u32::MAX, 0, &mut seen, &mut moves, &mut nodes_vecs)
+        .ok()
+        .map(|mut sol| {
+            sol.reverse();
+            sol
+        })
+}
+
+static mut LAST_SEEN_DEPTH: u32 = 0;
+
+fn rbfs(board: &Board<Endpoints>,
+        dists: &Vec<(u32, Vec<Pos>)>,
+        node: &Node,
+        estimated_cost_limit: u32,
+        depth: u32,
+        seen: &mut HashMap<Robots, u32>,
+        moves: &mut Vec<Move>,
+        nodes_vecs: &mut [Vec<Node>])
+        -> Result<Vec<Move>, u32>
+{
+    use std::cmp::min;
+
+    unsafe {
+        if depth > LAST_SEEN_DEPTH {
+            println!("DEPTH: {}", depth);
+            LAST_SEEN_DEPTH = depth;
+        }
+    }
+
+    let mut state_seen = node.state;
+    &mut state_seen[1..board.robots_len as usize].sort();
+
+    seen.insert(state_seen, depth);
+
+    if node.state[0] == board.goal {
+        return Ok(vec![]);
+    }
+
+    moves.clear();
+    board.possible_moves(node.state, moves);
+
+    let (mut nodes, rest) = nodes_vecs.split_first_mut().unwrap();
+    nodes.clear();
+
+    for m in moves.iter() {
+        let mut child = child_node(dists, &node, m.clone(), depth, board.robots_len);
+
+        let mut child_state_seen = child.state;
+        &mut child_state_seen[1..board.robots_len as usize].sort();
+
+        if *seen.get(&child_state_seen).unwrap_or(&u32::MAX) <= depth {
+            continue;
+        }
+
+        if node.estimated_cost > child.estimated_cost {
+            child.estimated_cost = node.estimated_cost;
+        }
+
+        nodes.push(child);
+    }
+
+    let mut successors = BinaryHeap::from_iter(nodes);
+
+    while let Some(mut best) = successors.pop() {
+        if best.estimated_cost > estimated_cost_limit {
+            return Err(best.estimated_cost);
+        }
+
+        let alternative_estimated_cost = successors.peek()
+            .map_or(u32::MAX, |a| a.estimated_cost);
+
+        let m = min(estimated_cost_limit, alternative_estimated_cost);
+        let result = rbfs(board, dists, &best, m, depth+1, seen, moves, rest);
+
+        match result {
+            Err(res) => best.estimated_cost = res,
+            Ok(mut sol) => {
+                sol.push(best.action);
+                return Ok(sol);
+            }
+        }
+
+        successors.push(best);
+    }
+
+    Err(u32::MAX)
+}
+
+/// Parse a board from a string
+impl FromStr for Board<bool> {
+    type Err = String;
+
+    fn from_str(s: &str) -> Result<Self, Self::Err> {
+        let mut lines = s.lines();
+
+        let size: Pos = lines.next().unwrap().parse().unwrap();
+        lines.next().unwrap();
+        let mut robots = [0; MAX_ROBOTS];
+        let mut robots_len = 0;
+        let mut goal = 0;
+
+        let mut board = Vec::with_capacity((size * size) as usize);
+        let mut idx: Pos = 0;
+
+        for line in lines {
+            for c in line.chars() {
+                match c {
+                    EMPTY_CHAR => board.push(false),
+                    WALL_CHAR => board.push(true),
+                    d if d.is_digit(10) => {
+                        let i = d.to_digit(10).unwrap();
+                        robots[i as usize] = idx;
+                        board.push(false);
+                        robots_len += 1;
+                    },
+                    GOAL_CHAR => {
+                        goal = idx;
+                        board.push(false);
+                    },
+                    c => return Err(format!("Unexpected character: {}", c)),
+                }
+
+                idx = idx + 1;
+            }
+        }
+
+        Ok(Board {
+            board: board.into_boxed_slice(),
+            robots: robots,
+            size: size,
+            goal: goal,
+            robots_len: robots_len,
+        })
+    }
+}
+
+/// Display a board
+impl fmt::Display for Board<bool> {
+    fn fmt(&self, f: &mut fmt::Formatter) -> Result<(), fmt::Error> {
+        try!(writeln!(f, "{}", self.size));
+        try!(writeln!(f, "{}", self.robots_len));
+
+        let mut idx = 0;
+
+        for row in self.board.chunks(self.size as usize) {
+            for &b in row {
+                if b {
+                    try!(write!(f, "{}", WALL_CHAR));
+                } else {
+                    if let Some(robot) = self.robots
+                        .iter()
+                        .take(self.robots_len as usize)
+                        .position(|&pos| pos == idx)
+                    {
+                        try!(write!(f, "{}", robot));
+                    } else if idx == self.goal {
+                        try!(write!(f, "{}", GOAL_CHAR));
+                    } else {
+                        try!(write!(f, "{}", EMPTY_CHAR));
+                    }
+                }
+
+                idx += 1;
+            }
+            try!(writeln!(f, ""));
+        }
+
+        Ok(())
+    }
+}
+
+/// Display directions by their initial letter
+impl fmt::Display for Direction {
+    fn fmt(&self, f: &mut fmt::Formatter) -> Result<(), fmt::Error> {
+        use Direction::*;
+
+        let s = match *self {
+            Up => "U",
+            Right => "R",
+            Down => "D",
+            Left => "L",
+        };
+
+        write!(f, "{}", s)
+    }
+}
+
+/// Display moves by robot number and direction, e.g. "0L" or "1U"
+impl fmt::Display for Move {
+    fn fmt(&self, f: &mut fmt::Formatter) -> Result<(), fmt::Error> {
+        write!(f, "{}{}", self.robot, self.dir)
+    }
+}
+
+impl fmt::Display for MoveLite {
+    fn fmt(&self, f: &mut fmt::Formatter) -> Result<(), fmt::Error> {
+        write!(f, "{}{}", self.robot(), self.direction())
+    }
+}
+
+impl Move {
+    /// Shorthand for making a new move
+    fn new(robot: Robot, to: Pos, dir: Direction) -> Move {
+        Move {
+            to: to,
+            robot: robot,
+            dir: dir,
+        }
+    }
+}
+
+impl MoveLite {
+    fn new(robot: Robot, dir: Direction) -> Self {
+        MoveLite(robot | ((dir as u8) << 4))
+    }
+
+    fn robot(&self) -> Robot {
+        self.0 & 0b1111
+    }
+
+    fn direction(&self) -> Direction {
+        use Direction::*;
+
+        match self.0 >> 4 {
+            0b0001 => Up,
+            0b0010 => Right,
+            0b0100 => Down,
+            0b1000 => Left,
+            _ => panic!("Wrong dir: {}", self.0),
+        }
+    }
+}
+
+
+impl Direction {
+    /// What should be added to an index to move in the given direction on a board of size `size`
+    fn delta_idx(&self, size: Pos) -> i32 {
+        use std::ops::Neg;
+        use Direction::*;
+
+        match *self {
+            Up => (size as i32).neg(),
+            Right => 1,
+            Down => size as i32,
+            Left => -1,
+        }
+    }
+}
+
+impl<T> Board<T> {
+
+    /// Is `i` a reachable index starting at `from` in the given direction without considering walls
+    fn within_board(&self, i: i32, from: Pos, dir: &Direction) -> bool
+    {
+        use Direction::*;
+
+        match *dir {
+            Up => i >= 0,
+            Right => (i as Pos) < (from / self.size + 1) * self.size,
+            Down => (i as usize) < self.board.len(),
+            Left => (i as Pos) >= (from / self.size) * self.size,
+        }
+    }
+}
+
+impl Board<bool> {
+    /// Make an endpoint board from the current one
+    /// This happens only once before the search starts, so it doesn't have to be very fast.
+    fn to_endpoints_board(&self) -> Board<Endpoints> {
+        use Direction::*;
+
+        let mut board: Vec<Endpoints> = Vec::with_capacity(self.board.len());
+
+        for idx in 0 .. self.board.len() {
+            if self.board[idx] {
+                // Endpoints from within a wall should be considered undefined
+                board.push(Endpoints {
+                    up: 0,
+                    right: 0,
+                    down: 0,
+                    left: 0,
+                });
+            } else {
+                let i = idx as Pos;
+
+                let (left, right) = if i % self.size == 0 ||
+                    self.board[idx - 1]
+                {
+                    (i, self.endpoint_in_direction(i, Right))
+                } else {
+                    let ref prev = board[idx - 1];
+                    (prev.left, prev.right)
+                };
+
+                let (up, down) = if i < self.size ||
+                    self.board[idx - self.size as usize]
+                {
+                    (i, self.endpoint_in_direction(i, Down))
+                } else {
+                    let ref prev = board[idx - self.size as usize];
+                    (prev.up, prev.down)
+                };
+
+                board.push(Endpoints {
+                    up: up,
+                    right: right,
+                    down: down,
+                    left: left,
+                })
+            }
+        }
+
+        Board {
+            board: board.into_boxed_slice(),
+            robots: self.robots,
+            size: self.size,
+            goal: self.goal,
+            robots_len: self.robots_len,
+        }
+    }
+
+    /// What index is reachable from the given position in the given direction
+    fn endpoint_in_direction(&self, from: Pos, dir: Direction) -> Pos {
+        let mut to = from;
+        let di = dir.delta_idx(self.size);
+
+        let mut next = to as i32 + di;
+        while next >= 0 &&
+            self.within_board(next, from, &dir) &&
+            !self.board[next as usize]
+        {
+            to = next as Pos;
+            next += di;
+        }
+
+        to
+    }
+
+    fn get_dists(&self) -> Vec<(u32, Vec<Pos>)> {
+        use Direction::*;
+        use std::collections::VecDeque;
+
+        let mut queue = VecDeque::new();
+
+        queue.push_back((self.goal, 0, vec![]));
+
+        let mut dists = vec![(std::u32::MAX, vec![]); self.board.len()];
+
+        while let Some((from, dist, spots)) = queue.pop_front() {
+            dists[from as usize] = (dist, spots.clone());
+
+            for dir in [Up, Right, Down, Left].into_iter() {
+                let di = dir.delta_idx(self.size);
+
+                let opposite = match *dir {
+                    Up => Down,
+                    Right => Left,
+                    Down => Up,
+                    Left => Right,
+                };
+
+                let mut new_spots = spots.clone();
+
+                let prev = from as i32 - di;
+                if prev >= 0
+                    && (prev as usize) < self.board.len()
+                    && !self.board[prev as usize]
+                    && self.within_board(prev, from, &opposite)
+                {
+                    new_spots.push(prev as Pos)
+                }
+
+                let mut next = from as i32 + di;
+
+                while next >= 0
+                    && self.within_board(next, from, dir)
+                    && !self.board[next as usize]
+                    && dists[next as usize].0 == std::u32::MAX
+                {
+                    let mut found = false;
+
+                    for &mut (n, _, ref mut rs) in queue.iter_mut() {
+                        if n as i32 == next {
+                            found = true;
+
+                            if new_spots.len() < rs.len() {
+                                *rs = new_spots.clone();
+                            }
+
+                            break;
+                        }
+                    }
+
+                    if !found {
+                        queue.push_back(
+                            (next as Pos, dist+1, new_spots.clone())
+                        );
+                    }
+                    next += di;
+                }
+            }
+        }
+
+        dists
+    }
+}
+
+impl Board<Endpoints> {
+
+    /// Push all possible on the board given a specific placement of robots into `moves`
+    /// This happens at each node of the search, so it should be as fast as possible.
+    fn possible_moves(&self, robots: Robots, moves: &mut Vec<Move>) {
+        use Direction::*;
+
+        // Loop through each robot's number and position
+        for (i, &robot) in (0..self.robots_len).zip(robots.iter()) {
+            // Look up the possible endpoints if no other robot is in the way
+            let Endpoints {mut up, mut right, mut down, mut left} = self.board[robot as usize];
+
+            // Check if there actually are robots in the way
+            for (_, &r) in (0..self.robots_len).zip(robots.iter()) {
+                if r > robot {
+                    if r <= right {
+                        right = r - 1;
+                    } else if r <= down && r % self.size == robot % self.size {
+                        down = r - self.size;
+                    }
+                } else if r < robot {
+                    if r >= left {
+                        left = r + 1;
+                    } else if r >= up && r % self.size == robot % self.size {
+                        up = r + self.size;
+                    }
+                }
+            }
+
+            // Push the found moves
+
+            if up != robot {
+                moves.push(Move::new(i, up, Up));
+            }
+
+            if right != robot {
+                moves.push(Move::new(i, right, Right));
+            }
+
+            if down != robot {
+                moves.push(Move::new(i, down, Down));
+            }
+
+            if left != robot {
+                moves.push(Move::new(i, left, Left));
+            }
+        }
+    }
+}
+
+/// Utility function for reading a file into a string
+pub fn read_file(name: &Path) -> io::Result<String> {
+    use std::fs::File;
+
+    let mut f = try!(File::open(name));
+    let mut s = String::new();
+    try!(f.read_to_string(&mut s));
+    Ok(s)
+}
+
+fn main() {
+    let mut buffer = String::new();
+    io::stdin().read_to_string(&mut buffer).expect("Provide a map on stdin");
+
+    let board = Board::<bool>::from_str(&buffer).unwrap();
+    let endboard = board.to_endpoints_board();
+    let dists = board.get_dists();
+
+    let sol = astar(&endboard, &dists).expect("No solution found.");
+
+    for m in &sol {
+        println!("{}", m);
+    }
+
+    // println!("Solved in {} steps.", sol.len());
+
+    // if board.robots_len <= 4 {
+    //     let sol = bfs(&endboard).expect("No solution found.");
+
+    //     for m in &sol {
+    //         println!("{}", m);
+    //     }
+
+    //     println!("Solved in {} steps.", sol.len());
+    // } else {
+    //     let sol = recursive_best_first_search(&endboard, &dists)
+    //         .expect("No solution found");
+
+    //     for m in &sol {
+    //         println!("{}", m);
+    //     }
+
+    //     println!("Solved in {} steps.", sol.len());
+    // };
+}
+
+pub struct Heap {
+    data: Vec<AStarNode>,
+    indices: HashMap<Robots, usize>,
+}
+
+impl Heap {
+    pub fn new() -> Self {
+        let mut v = Vec::with_capacity(1);
+        unsafe { v.set_len(1); }
+
+        Heap {
+            data: v,
+            indices: HashMap::new(),
+        }
+    }
+
+    fn left_child(&self, idx: usize) -> usize {
+        idx * 2
+    }
+
+    fn right_child(&self, idx: usize) -> usize {
+        idx * 2 + 1
+    }
+
+    fn parent(&self, idx: usize) -> usize {
+        idx / 2
+    }
+
+    fn sift_up(&mut self, mut idx: usize) {
+        let mut p = self.parent(idx);
+        while p > 0 && self.data[p] > self.data[idx] {
+            self.data.swap(p, idx);
+
+            self.indices.insert(self.data[p].symmetry, p);
+
+            idx = p;
+            p = self.parent(idx);
+        }
+
+        self.indices.insert(self.data[idx].symmetry, idx);
+    }
+
+    fn smaller_child(&self, idx: usize) -> Option<usize> {
+        let l = self.left_child(idx);
+        let r = self.right_child(idx);
+
+        if l >= self.data.len() {
+            None
+        } else if r >= self.data.len() || self.data[l] < self.data[r] {
+            Some(l)
+        } else {
+            Some(r)
+        }
+    }
+
+    fn sift_down(&mut self, mut idx: usize) {
+        while let Some(smaller) = self.smaller_child(idx) {
+            self.data.swap(smaller, idx);
+            self.indices.insert(self.data[smaller].symmetry, smaller);
+            idx = smaller;
+        }
+
+        idx = self.parent(idx);
+        self.indices.insert(self.data[idx].symmetry, idx);
+    }
+
+    pub fn extract_min(&mut self) -> Option<AStarNode> {
+        if self.data.len() < 2 {
+            None
+        } else {
+            let res = self.data.swap_remove(1);
+            self.indices.remove(&res.symmetry);
+
+            if self.data.len() >= 2 {
+                self.indices.insert(self.data[1].symmetry, 1);
+                self.sift_down(1);
+            }
+
+            Some(res)
+        }
+    }
+
+    pub fn insert(&mut self, value: AStarNode) {
+        let idx = self.data.len();
+        self.data.push(value);
+        self.sift_up(idx);
+    }
+
+    pub fn replace_smaller(&mut self, value: AStarNode) -> bool {
+        if let Some(&existing) = self.indices.get(&value.symmetry) {
+            if self.data[existing] > value {
+                self.data[existing] = value;
+                self.sift_up(existing);
+
+                return true;
+            }
+        }
+
+        false
+    }
+
+    pub fn contains(&self, value: &Robots) -> bool {
+        self.indices.contains_key(value)
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use std::str::FromStr;
+    use std::path::Path;
+
+    const BOARDS_PATH: &'static str = "../../boards/random_boards/3_hard/";
+
+    fn ids_tester(path: &str, expected_steps: usize) {
+        let path = Path::new(BOARDS_PATH).join(Path::new(path));
+        let s = read_file(&path).unwrap();
+
+        let board = Board::from_str(&s).unwrap().to_endpoints_board();
+        let sol = ids(&board);
+
+        assert_eq!(sol.len(), expected_steps);
+    }
+
+    #[test]
+    fn ricochet_test_1_ids() {
+        ids_tester("n=15___robots=1___possible_in_15_moves.txt", 10);
+    }
+
+    #[test]
+    fn ricochet_test_2_ids() {
+        ids_tester("n=15___robots=2___possible_in_15_moves.txt", 8);
+    }
+
+    #[test]
+    fn ricochet_test_4_ids() {
+        ids_tester("n=15___robots=4___possible_in_15_moves.txt", 6);
+    }
+
+    fn bfs_tester(path: &str, expected_steps: usize) {
+        let path = Path::new(BOARDS_PATH).join(Path::new(path));
+        let s = read_file(&path).unwrap();
+
+        let board = Board::from_str(&s).unwrap().to_endpoints_board();
+        let sol = bfs(&board).expect("No solution");
+
+        assert_eq!(sol.len(), expected_steps);
+    }
+
+    #[test]
+    fn ricochet_test_1_bfs() {
+        bfs_tester("n=15___robots=1___possible_in_15_moves.txt", 10);
+    }
+
+    #[test]
+    fn ricochet_test_2_bfs() {
+        bfs_tester("n=15___robots=2___possible_in_15_moves.txt", 8);
+    }
+
+    #[test]
+    fn ricochet_test_4_bfs() {
+        bfs_tester("n=15___robots=4___possible_in_15_moves.txt", 6);
+    }
+
+    fn rbfs_tester(path: &str, expected_steps: usize) {
+        let path = Path::new(BOARDS_PATH).join(Path::new(path));
+        let s = read_file(&path).unwrap();
+
+        let board = Board::from_str(&s).unwrap();
+        let endpoints = board.to_endpoints_board();
+        let dists = board.get_dists();
+
+        let sol = recursive_best_first_search(&endpoints, &dists)
+            .expect("No solution");
+
+        assert_eq!(sol.len(), expected_steps);
+    }
+
+    #[test]
+    fn ricochet_test_1_rbfs() {
+        rbfs_tester("n=15___robots=1___possible_in_15_moves.txt", 10);
+    }
+
+    #[test]
+    fn ricochet_test_2_rbfs() {
+        rbfs_tester("n=15___robots=2___possible_in_15_moves.txt", 8);
+    }
+
+    #[test]
+    fn ricochet_test_4_rbfs() {
+        rbfs_tester("n=15___robots=4___possible_in_15_moves.txt", 6);
+    }
+
+    #[test]
+    fn rbfs_100_4_admissible() {
+        let path = Path::new(
+            "../../boards/random_boards/5_very_large/n=100___robots=4___possible_in_20_moves.txt"
+        );
+        let s = read_file(&path).unwrap();
+
+        let board = Board::from_str(&s).unwrap();
+        let endpoints = board.to_endpoints_board();
+        let dists = board.get_dists();
+
+        let sol = recursive_best_first_search(&endpoints, &dists)
+            .expect("No solution");
+
+        assert_eq!(sol.len(), 7);
+    }
+
+    fn astar_tester(path: &str, expected_steps: usize) {
+        let path = Path::new(BOARDS_PATH).join(Path::new(path));
+        let s = read_file(&path).unwrap();
+
+        let board = Board::from_str(&s).unwrap();
+        let endpoints = board.to_endpoints_board();
+        let dists = board.get_dists();
+
+        let sol = astar(&endpoints, &dists)
+            .expect("No solution");
+
+        assert_eq!(sol.len(), expected_steps);
+    }
+
+    #[test]
+    fn ricochet_test_1_astar() {
+        astar_tester("n=15___robots=1___possible_in_15_moves.txt", 10);
+    }
+
+    #[test]
+    fn ricochet_test_2_astar() {
+        astar_tester("n=15___robots=2___possible_in_15_moves.txt", 8);
+    }
+
+    #[test]
+    fn ricochet_test_4_astar() {
+        astar_tester("n=15___robots=4___possible_in_15_moves.txt", 6);
+    }
+
+    #[test]
+    fn astar_100_4_admissible() {
+        let path = Path::new(
+            "../../boards/random_boards/5_very_large/n=100___robots=4___possible_in_20_moves.txt"
+        );
+        let s = read_file(&path).unwrap();
+
+        let board = Board::from_str(&s).unwrap();
+        let endpoints = board.to_endpoints_board();
+        let dists = board.get_dists();
+
+        let sol = astar(&endpoints, &dists)
+            .expect("No solution");
+
+        assert_eq!(sol.len(), 7);
+    }
+}
+

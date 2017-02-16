@@ -1,0 +1,1211 @@
+../../boards/random_boards/.DS_Store
+../../boards/random_boards/0_very_easy/n=10___robots=1___possible_in_1_moves.txt
+STATES SEEN: 1
+0L
+Solved in 1 steps.
+../../boards/random_boards/0_very_easy/n=10___robots=1___possible_in_2_moves.txt
+STATES SEEN: 2
+0U
+0R
+Solved in 2 steps.
+../../boards/random_boards/0_very_easy/n=10___robots=1___possible_in_3_moves.txt
+STATES SEEN: 6
+0R
+0D
+0L
+Solved in 3 steps.
+../../boards/random_boards/0_very_easy/n=10___robots=2___possible_in_2_moves.txt
+STATES SEEN: 4
+1R
+0D
+Solved in 2 steps.
+../../boards/random_boards/0_very_easy/n=10___robots=2___possible_in_3_moves.txt
+STATES SEEN: 26
+1D
+1L
+0L
+Solved in 3 steps.
+../../boards/random_boards/0_very_easy/n=10___robots=3___possible_in_2_moves.txt
+STATES SEEN: 7
+2U
+0L
+Solved in 2 steps.
+../../boards/random_boards/0_very_easy/n=10___robots=3___possible_in_3_moves.txt
+STATES SEEN: 57
+2L
+0L
+0D
+Solved in 3 steps.
+../../boards/random_boards/0_very_easy/n=10___robots=4___possible_in_2_moves.txt
+STATES SEEN: 6
+1L
+0U
+Solved in 2 steps.
+../../boards/random_boards/0_very_easy/n=10___robots=4___possible_in_3_moves.txt
+STATES SEEN: 71
+3U
+2R
+0D
+Solved in 3 steps.
+../../boards/random_boards/0_very_easy/n=5___robots=1___possible_in_1_moves.txt
+STATES SEEN: 1
+0R
+Solved in 1 steps.
+../../boards/random_boards/0_very_easy/n=5___robots=1___possible_in_2_moves.txt
+STATES SEEN: 2
+0L
+0D
+Solved in 2 steps.
+../../boards/random_boards/0_very_easy/n=5___robots=1___possible_in_3_moves.txt
+STATES SEEN: 9
+0D
+0R
+0U
+Solved in 3 steps.
+../../boards/random_boards/0_very_easy/n=5___robots=2___possible_in_2_moves.txt
+STATES SEEN: 4
+1R
+0U
+Solved in 2 steps.
+../../boards/random_boards/0_very_easy/n=5___robots=2___possible_in_3_moves.txt
+STATES SEEN: 23
+1R
+0R
+0U
+Solved in 3 steps.
+../../boards/random_boards/0_very_easy/n=5___robots=3___possible_in_2_moves.txt
+STATES SEEN: 6
+1D
+0L
+Solved in 2 steps.
+../../boards/random_boards/0_very_easy/n=5___robots=3___possible_in_3_moves.txt
+STATES SEEN: 58
+1L
+1U
+0U
+Solved in 3 steps.
+../../boards/random_boards/0_very_easy/n=5___robots=4___possible_in_2_moves.txt
+STATES SEEN: 12
+3U
+0U
+Solved in 2 steps.
+../../boards/random_boards/0_very_easy/n=5___robots=4___possible_in_3_moves.txt
+STATES SEEN: 85
+3L
+0L
+0U
+Solved in 3 steps.
+../../boards/random_boards/0_very_easy/n=7___robots=1___possible_in_1_moves.txt
+STATES SEEN: 1
+0R
+Solved in 1 steps.
+../../boards/random_boards/0_very_easy/n=7___robots=1___possible_in_2_moves.txt
+STATES SEEN: 2
+0R
+0U
+Solved in 2 steps.
+../../boards/random_boards/0_very_easy/n=7___robots=1___possible_in_3_moves.txt
+STATES SEEN: 7
+0U
+0L
+0D
+Solved in 3 steps.
+../../boards/random_boards/0_very_easy/n=7___robots=2___possible_in_2_moves.txt
+STATES SEEN: 5
+1U
+0R
+Solved in 2 steps.
+../../boards/random_boards/0_very_easy/n=7___robots=2___possible_in_3_moves.txt
+STATES SEEN: 22
+1L
+1U
+0L
+Solved in 3 steps.
+../../boards/random_boards/0_very_easy/n=7___robots=3___possible_in_2_moves.txt
+STATES SEEN: 7
+2U
+0R
+Solved in 2 steps.
+../../boards/random_boards/0_very_easy/n=7___robots=3___possible_in_3_moves.txt
+STATES SEEN: 46
+0L
+1L
+0U
+Solved in 3 steps.
+../../boards/random_boards/0_very_easy/n=7___robots=4___possible_in_2_moves.txt
+STATES SEEN: 3
+1U
+0U
+Solved in 2 steps.
+../../boards/random_boards/0_very_easy/n=7___robots=4___possible_in_3_moves.txt
+STATES SEEN: 85
+2U
+0U
+0L
+Solved in 3 steps.
+../../boards/random_boards/1_easy/n=10___robots=1___possible_in_5_moves.txt
+STATES SEEN: 15
+0U
+0R
+0D
+0L
+0U
+Solved in 5 steps.
+../../boards/random_boards/1_easy/n=10___robots=2___possible_in_5_moves.txt
+STATES SEEN: 103
+0U
+0L
+1U
+0R
+0D
+Solved in 5 steps.
+../../boards/random_boards/1_easy/n=10___robots=4___possible_in_5_moves.txt
+STATES SEEN: 659
+0R
+0U
+2U
+0L
+0D
+Solved in 5 steps.
+../../boards/random_boards/1_easy/n=10___robots=8___possible_in_5_moves.txt
+STATES SEEN: 64
+0D
+5L
+0U
+Solved in 3 steps.
+../../boards/random_boards/1_easy/n=5___robots=1___possible_in_5_moves.txt
+STATES SEEN: 5
+0R
+0D
+0L
+0U
+0R
+Solved in 5 steps.
+../../boards/random_boards/1_easy/n=5___robots=2___possible_in_5_moves.txt
+STATES SEEN: 67
+0U
+1R
+1U
+0R
+0D
+Solved in 5 steps.
+../../boards/random_boards/1_easy/n=5___robots=4___possible_in_5_moves.txt
+STATES SEEN: 150
+3R
+0U
+2D
+0R
+Solved in 4 steps.
+../../boards/random_boards/1_easy/n=5___robots=8___possible_in_5_moves.txt
+STATES SEEN: 143
+4D
+0R
+0D
+Solved in 3 steps.
+../../boards/random_boards/1_easy/n=6___robots=1___possible_in_5_moves.txt
+STATES SEEN: 11
+0U
+0R
+0D
+0R
+0U
+Solved in 5 steps.
+../../boards/random_boards/1_easy/n=6___robots=1___possible_in_6_moves.txt
+STATES SEEN: 16
+0D
+0R
+0U
+0L
+0U
+0R
+Solved in 6 steps.
+../../boards/random_boards/1_easy/n=6___robots=2___possible_in_5_moves.txt
+STATES SEEN: 128
+0L
+0D
+0R
+1L
+0U
+Solved in 5 steps.
+../../boards/random_boards/1_easy/n=6___robots=2___possible_in_6_moves.txt
+STATES SEEN: 32
+0R
+0D
+1R
+0U
+0L
+Solved in 5 steps.
+../../boards/random_boards/1_easy/n=6___robots=4___possible_in_5_moves.txt
+STATES SEEN: 375
+3L
+0U
+0L
+0D
+Solved in 4 steps.
+../../boards/random_boards/1_easy/n=6___robots=4___possible_in_6_moves.txt
+STATES SEEN: 325
+1D
+0R
+3U
+0U
+Solved in 4 steps.
+../../boards/random_boards/1_easy/n=6___robots=8___possible_in_5_moves.txt
+STATES SEEN: 443
+0L
+1R
+3R
+0D
+Solved in 4 steps.
+../../boards/random_boards/1_easy/n=6___robots=8___possible_in_6_moves.txt
+STATES SEEN: 343
+0R
+3R
+0D
+0L
+Solved in 4 steps.
+../../boards/random_boards/1_easy/n=7___robots=1___possible_in_5_moves.txt
+STATES SEEN: 14
+0R
+0D
+0L
+0U
+0R
+Solved in 5 steps.
+../../boards/random_boards/1_easy/n=7___robots=1___possible_in_7_moves.txt
+STATES SEEN: 18
+0L
+0U
+0R
+0D
+0L
+0D
+0L
+Solved in 7 steps.
+../../boards/random_boards/1_easy/n=7___robots=2___possible_in_5_moves.txt
+STATES SEEN: 148
+1L
+1U
+1R
+1D
+0L
+Solved in 5 steps.
+../../boards/random_boards/1_easy/n=7___robots=2___possible_in_7_moves.txt
+STATES SEEN: 86
+1U
+0R
+0D
+0L
+0D
+Solved in 5 steps.
+../../boards/random_boards/1_easy/n=7___robots=4___possible_in_5_moves.txt
+STATES SEEN: 323
+0U
+0L
+3L
+3U
+0R
+Solved in 5 steps.
+../../boards/random_boards/1_easy/n=7___robots=4___possible_in_7_moves.txt
+STATES SEEN: 922
+0R
+0D
+0L
+1R
+0U
+Solved in 5 steps.
+../../boards/random_boards/1_easy/n=7___robots=8___possible_in_5_moves.txt
+STATES SEEN: 360
+0U
+7U
+0L
+0U
+Solved in 4 steps.
+../../boards/random_boards/1_easy/n=7___robots=8___possible_in_7_moves.txt
+STATES SEEN: 337
+0U
+7L
+0L
+0D
+Solved in 4 steps.
+../../boards/random_boards/1_easy/n=8___robots=1___possible_in_5_moves.txt
+STATES SEEN: 9
+0L
+0U
+0L
+0D
+0R
+Solved in 5 steps.
+../../boards/random_boards/1_easy/n=8___robots=2___possible_in_5_moves.txt
+STATES SEEN: 113
+0D
+1R
+1D
+0R
+0U
+Solved in 5 steps.
+../../boards/random_boards/1_easy/n=8___robots=4___possible_in_5_moves.txt
+STATES SEEN: 153
+0L
+1U
+1R
+0U
+Solved in 4 steps.
+../../boards/random_boards/1_easy/n=8___robots=8___possible_in_5_moves.txt
+STATES SEEN: 353
+0U
+1U
+1R
+0R
+Solved in 4 steps.
+../../boards/random_boards/1_easy/n=9___robots=1___possible_in_5_moves.txt
+STATES SEEN: 18
+0L
+0U
+0R
+0D
+0L
+Solved in 5 steps.
+../../boards/random_boards/1_easy/n=9___robots=2___possible_in_5_moves.txt
+STATES SEEN: 242
+1L
+0U
+1R
+1D
+0D
+Solved in 5 steps.
+../../boards/random_boards/1_easy/n=9___robots=4___possible_in_5_moves.txt
+STATES SEEN: 67
+0R
+0D
+1D
+0L
+Solved in 4 steps.
+../../boards/random_boards/1_easy/n=9___robots=8___possible_in_5_moves.txt
+STATES SEEN: 630
+0R
+0D
+3R
+0U
+Solved in 4 steps.
+../../boards/random_boards/2_medium/n=10___robots=1___possible_in_10_moves.txt
+STATES SEEN: 19
+0R
+0U
+0L
+0D
+0R
+0D
+0L
+0D
+Solved in 8 steps.
+../../boards/random_boards/2_medium/n=10___robots=2___possible_in_10_moves.txt
+STATES SEEN: 191
+1U
+1L
+1D
+1R
+1D
+0L
+0U
+Solved in 7 steps.
+../../boards/random_boards/2_medium/n=10___robots=4___possible_in_10_moves.txt
+STATES SEEN: 764
+0U
+0R
+1L
+1U
+0L
+Solved in 5 steps.
+../../boards/random_boards/2_medium/n=10___robots=8___possible_in_10_moves.txt
+STATES SEEN: 9926
+0D
+5R
+5D
+0R
+0D
+Solved in 5 steps.
+../../boards/random_boards/2_medium/n=12___robots=1___possible_in_5_moves.txt
+STATES SEEN: 13
+0L
+0D
+0R
+0D
+0L
+Solved in 5 steps.
+../../boards/random_boards/2_medium/n=12___robots=2___possible_in_5_moves.txt
+STATES SEEN: 260
+1L
+0U
+0R
+1U
+0L
+Solved in 5 steps.
+../../boards/random_boards/2_medium/n=12___robots=4___possible_in_5_moves.txt
+STATES SEEN: 181
+0D
+1D
+0R
+0U
+Solved in 4 steps.
+../../boards/random_boards/2_medium/n=12___robots=8___possible_in_5_moves.txt
+STATES SEEN: 669
+0D
+0L
+7D
+0R
+Solved in 4 steps.
+../../boards/random_boards/2_medium/n=15___robots=1___possible_in_5_moves.txt
+STATES SEEN: 14
+0R
+0U
+0L
+0D
+0R
+Solved in 5 steps.
+../../boards/random_boards/2_medium/n=15___robots=2___possible_in_5_moves.txt
+STATES SEEN: 113
+0L
+0D
+1U
+1L
+0U
+Solved in 5 steps.
+../../boards/random_boards/2_medium/n=15___robots=4___possible_in_5_moves.txt
+STATES SEEN: 213
+0U
+2L
+2D
+0L
+Solved in 4 steps.
+../../boards/random_boards/2_medium/n=15___robots=8___possible_in_5_moves.txt
+STATES SEEN: 46
+0U
+5R
+0D
+Solved in 3 steps.
+../../boards/random_boards/2_medium/n=20___robots=1___possible_in_5_moves.txt
+STATES SEEN: 33
+0L
+0D
+0L
+0U
+0R
+Solved in 5 steps.
+../../boards/random_boards/2_medium/n=20___robots=2___possible_in_5_moves.txt
+STATES SEEN: 116
+0R
+0D
+1R
+0U
+0L
+Solved in 5 steps.
+../../boards/random_boards/2_medium/n=20___robots=4___possible_in_5_moves.txt
+STATES SEEN: 378
+0L
+2U
+0U
+0R
+Solved in 4 steps.
+../../boards/random_boards/2_medium/n=20___robots=8___possible_in_5_moves.txt
+STATES SEEN: 423
+0U
+0R
+1U
+0L
+Solved in 4 steps.
+../../boards/random_boards/2_medium/n=25___robots=1___possible_in_5_moves.txt
+STATES SEEN: 23
+0D
+0R
+0U
+0L
+0U
+Solved in 5 steps.
+../../boards/random_boards/2_medium/n=30___robots=1___possible_in_5_moves.txt
+STATES SEEN: 27
+0L
+0U
+0R
+0U
+0L
+Solved in 5 steps.
+../../boards/random_boards/2_medium/n=8___robots=1___possible_in_8_moves.txt
+STATES SEEN: 12
+0U
+0L
+0D
+0L
+0D
+0R
+0U
+Solved in 7 steps.
+../../boards/random_boards/2_medium/n=8___robots=2___possible_in_8_moves.txt
+STATES SEEN: 174
+0D
+0R
+0U
+1D
+0L
+0D
+Solved in 6 steps.
+../../boards/random_boards/2_medium/n=8___robots=4___possible_in_8_moves.txt
+STATES SEEN: 1980
+0R
+0U
+1U
+0L
+3R
+0D
+Solved in 6 steps.
+../../boards/random_boards/2_medium/n=8___robots=8___possible_in_8_moves.txt
+STATES SEEN: 6690
+0D
+5D
+5L
+0L
+0U
+Solved in 5 steps.
+../../boards/random_boards/2_medium/n=9___robots=1___possible_in_9_moves.txt
+STATES SEEN: 22
+0U
+0L
+0D
+0R
+0D
+0R
+0U
+0L
+Solved in 8 steps.
+../../boards/random_boards/2_medium/n=9___robots=2___possible_in_9_moves.txt
+STATES SEEN: 293
+0R
+0D
+1D
+1L
+0L
+0D
+0R
+Solved in 7 steps.
+../../boards/random_boards/2_medium/n=9___robots=4___possible_in_9_moves.txt
+STATES SEEN: 1287
+0D
+3D
+0R
+0U
+0R
+Solved in 5 steps.
+../../boards/random_boards/2_medium/n=9___robots=8___possible_in_9_moves.txt
+STATES SEEN: 3418
+0U
+7D
+2D
+0L
+0D
+Solved in 5 steps.
+../../boards/random_boards/3_hard/n=12___robots=1___possible_in_12_moves.txt
+STATES SEEN: 27
+0U
+0L
+0D
+0R
+0D
+0L
+0D
+0R
+0D
+Solved in 9 steps.
+../../boards/random_boards/3_hard/n=12___robots=2___possible_in_12_moves.txt
+STATES SEEN: 489
+0L
+0D
+1D
+1L
+1D
+1R
+1D
+0R
+Solved in 8 steps.
+../../boards/random_boards/3_hard/n=12___robots=4___possible_in_12_moves.txt
+STATES SEEN: 2097
+0U
+0L
+1D
+0D
+2D
+0R
+Solved in 6 steps.
+../../boards/random_boards/3_hard/n=12___robots=8___possible_in_12_moves.txt
+STATES SEEN: 2504
+0U
+1D
+1L
+1U
+0L
+Solved in 5 steps.
+../../boards/random_boards/3_hard/n=15___robots=1___possible_in_15_moves.txt
+STATES SEEN: 47
+0U
+0L
+0D
+0R
+0U
+0R
+0D
+0R
+0D
+0R
+Solved in 10 steps.
+../../boards/random_boards/3_hard/n=15___robots=2___possible_in_15_moves.txt
+STATES SEEN: 963
+0U
+1L
+1U
+1R
+1D
+1R
+1U
+0R
+Solved in 8 steps.
+../../boards/random_boards/3_hard/n=15___robots=4___possible_in_15_moves.txt
+STATES SEEN: 6083
+0D
+0R
+2R
+2D
+2R
+0U
+Solved in 6 steps.
+../../boards/random_boards/3_hard/n=15___robots=8___possible_in_15_moves.txt
+STATES SEEN: 9367
+0R
+4L
+0D
+6D
+0L
+Solved in 5 steps.
+../../boards/random_boards/3_hard/n=25___robots=2___possible_in_5_moves.txt
+STATES SEEN: 148
+1D
+1L
+0D
+0L
+0U
+Solved in 5 steps.
+../../boards/random_boards/3_hard/n=25___robots=4___possible_in_5_moves.txt
+STATES SEEN: 414
+0L
+2R
+0D
+0L
+Solved in 4 steps.
+../../boards/random_boards/3_hard/n=25___robots=8___possible_in_5_moves.txt
+STATES SEEN: 4470
+6L
+6U
+0L
+0D
+Solved in 4 steps.
+../../boards/random_boards/3_hard/n=30___robots=2___possible_in_5_moves.txt
+STATES SEEN: 282
+1U
+1R
+1D
+0L
+0D
+Solved in 5 steps.
+../../boards/random_boards/3_hard/n=30___robots=4___possible_in_5_moves.txt
+STATES SEEN: 1155
+0D
+2D
+0L
+0D
+0L
+Solved in 5 steps.
+../../boards/random_boards/3_hard/n=30___robots=8___possible_in_5_moves.txt
+STATES SEEN: 1303
+0R
+6R
+6U
+0U
+Solved in 4 steps.
+../../boards/random_boards/3_hard/n=45___robots=1___possible_in_5_moves.txt
+STATES SEEN: 26
+0U
+0R
+0U
+0R
+0D
+Solved in 5 steps.
+../../boards/random_boards/3_hard/n=45___robots=2___possible_in_5_moves.txt
+STATES SEEN: 105
+0D
+1R
+1D
+0R
+0U
+Solved in 5 steps.
+../../boards/random_boards/3_hard/n=45___robots=4___possible_in_5_moves.txt
+STATES SEEN: 222
+0U
+3D
+3L
+0L
+Solved in 4 steps.
+../../boards/random_boards/3_hard/n=45___robots=8___possible_in_5_moves.txt
+STATES SEEN: 395
+7L
+0U
+0R
+Solved in 3 steps.
+../../boards/random_boards/3_hard/n=60___robots=1___possible_in_5_moves.txt
+STATES SEEN: 19
+0L
+0D
+0L
+0D
+0R
+Solved in 5 steps.
+../../boards/random_boards/3_hard/n=60___robots=2___possible_in_5_moves.txt
+STATES SEEN: 164
+0R
+0U
+1U
+1R
+0D
+Solved in 5 steps.
+../../boards/random_boards/3_hard/n=60___robots=4___possible_in_5_moves.txt
+STATES SEEN: 402
+2D
+2L
+0L
+0U
+Solved in 4 steps.
+../../boards/random_boards/3_hard/n=60___robots=8___possible_in_5_moves.txt
+STATES SEEN: 367
+6U
+0L
+0D
+Solved in 3 steps.
+../../boards/random_boards/3_hard/n=80___robots=1___possible_in_5_moves.txt
+STATES SEEN: 26
+0D
+0L
+0D
+0R
+0U
+Solved in 5 steps.
+../../boards/random_boards/3_hard/n=80___robots=2___possible_in_5_moves.txt
+STATES SEEN: 155
+0L
+1L
+0U
+0L
+0U
+Solved in 5 steps.
+../../boards/random_boards/3_hard/n=80___robots=4___possible_in_5_moves.txt
+STATES SEEN: 455
+1U
+0L
+0U
+0L
+Solved in 4 steps.
+../../boards/random_boards/3_hard/n=80___robots=8___possible_in_5_moves.txt
+STATES SEEN: 279
+3D
+3L
+0D
+Solved in 3 steps.
+../../boards/random_boards/4_very_hard/n=20___robots=1___possible_in_20_moves.txt
+STATES SEEN: 52
+0L
+0U
+0R
+0D
+0R
+0D
+0L
+0D
+0R
+0D
+0L
+0D
+Solved in 12 steps.
+../../boards/random_boards/4_very_hard/n=20___robots=2___possible_in_20_moves.txt
+STATES SEEN: 2732
+0L
+1U
+1L
+1U
+0U
+0R
+1R
+1D
+1R
+0D
+Solved in 10 steps.
+../../boards/random_boards/4_very_hard/n=20___robots=4___possible_in_20_moves.txt
+STATES SEEN: 118611
+0R
+0U
+0L
+3U
+3L
+0D
+3D
+3L
+0U
+Solved in 9 steps.
+../../boards/random_boards/4_very_hard/n=20___robots=8___possible_in_20_moves.txt
+STATES SEEN: 6339
+0R
+2D
+2L
+0D
+0L
+Solved in 5 steps.
+../../boards/random_boards/4_very_hard/n=25___robots=1___possible_in_20_moves.txt
+STATES SEEN: 82
+0R
+0U
+0L
+0U
+0L
+0D
+0L
+0U
+0R
+0D
+0R
+0U
+0R
+Solved in 13 steps.
+../../boards/random_boards/4_very_hard/n=25___robots=2___possible_in_20_moves.txt
+STATES SEEN: 859
+0U
+0L
+1L
+0D
+1U
+0L
+0U
+0R
+0D
+Solved in 9 steps.
+../../boards/random_boards/4_very_hard/n=25___robots=4___possible_in_20_moves.txt
+STATES SEEN: 86304
+0U
+0R
+0U
+3R
+3U
+3R
+3D
+3R
+0D
+Solved in 9 steps.
+../../boards/random_boards/4_very_hard/n=25___robots=8___possible_in_20_moves.txt
+STATES SEEN: 12618
+0L
+4R
+0D
+0L
+0U
+Solved in 5 steps.
+../../boards/random_boards/4_very_hard/n=30___robots=1___possible_in_20_moves.txt
+STATES SEEN: 108
+0R
+0U
+0L
+0U
+0R
+0D
+0R
+0U
+0R
+0D
+0L
+0D
+0R
+Solved in 13 steps.
+../../boards/random_boards/4_very_hard/n=30___robots=2___possible_in_20_moves.txt
+STATES SEEN: 6867
+0U
+0L
+0D
+1L
+1D
+0L
+1L
+1U
+1L
+0U
+0L
+Solved in 11 steps.
+../../boards/random_boards/4_very_hard/n=30___robots=4___possible_in_20_moves.txt
+STATES SEEN: 6941
+1L
+1D
+1R
+1U
+0R
+0D
+Solved in 6 steps.
+../../boards/random_boards/4_very_hard/n=30___robots=8___possible_in_20_moves.txt
+STATES SEEN: 156391
+4U
+4L
+4U
+4R
+0D
+0R
+Solved in 6 steps.
+../../boards/random_boards/4_very_hard/n=45___robots=1___possible_in_20_moves.txt
+STATES SEEN: 162
+0R
+0D
+0L
+0U
+0L
+0D
+0L
+0D
+0R
+0U
+0L
+Solved in 11 steps.
+../../boards/random_boards/4_very_hard/n=45___robots=2___possible_in_20_moves.txt
+STATES SEEN: 3949
+0L
+0U
+0L
+0U
+0R
+0U
+1U
+1R
+1U
+0R
+Solved in 10 steps.
+../../boards/random_boards/4_very_hard/n=45___robots=4___possible_in_20_moves.txt
+STATES SEEN: 35060
+0D
+0R
+1U
+1R
+1U
+1R
+1D
+0D
+Solved in 8 steps.
+../../boards/random_boards/4_very_hard/n=45___robots=8___possible_in_20_moves.txt
+STATES SEEN: 13252
+0D
+0R
+0D
+6D
+0L
+Solved in 5 steps.
+../../boards/random_boards/4_very_hard/n=60___robots=1___possible_in_20_moves.txt
+STATES SEEN: 400
+0L
+0D
+0R
+0D
+0L
+0D
+0R
+0U
+0R
+0U
+0L
+0U
+0R
+Solved in 13 steps.
+../../boards/random_boards/4_very_hard/n=60___robots=2___possible_in_20_moves.txt
+STATES SEEN: 3787
+0R
+0U
+1D
+1R
+1U
+0L
+1L
+0U
+0L
+0D
+Solved in 10 steps.
+../../boards/random_boards/4_very_hard/n=60___robots=4___possible_in_20_moves.txt
+STATES SEEN: 19180
+0D
+0R
+0U
+3L
+3D
+3R
+0D
+Solved in 7 steps.
+../../boards/random_boards/4_very_hard/n=60___robots=8___possible_in_20_moves.txt
+STATES SEEN: 36671
+0U
+0L
+6R
+0D
+0L
+0D
+Solved in 6 steps.
+../../boards/random_boards/4_very_hard/n=80___robots=1___possible_in_20_moves.txt
+STATES SEEN: 527
+0D
+0R
+0U
+0L
+0U
+0L
+0D
+0R
+0D
+0L
+0U
+0L
+0U
+Solved in 13 steps.
+../../boards/random_boards/4_very_hard/n=80___robots=2___possible_in_20_moves.txt
+STATES SEEN: 19859
+0L
+0U
+0L
+0D
+0R
+0U
+0R
+0U
+0L
+0D
+0L
+0D
+Solved in 12 steps.
+../../boards/random_boards/4_very_hard/n=80___robots=4___possible_in_20_moves.txt
+STATES SEEN: 19478
+0L
+1R
+1D
+1L
+0D
+0L
+0U
+Solved in 7 steps.
+../../boards/random_boards/4_very_hard/n=80___robots=8___possible_in_20_moves.txt
+STATES SEEN: 198070
+0U
+0L
+5L
+5U
+5L
+5U
+0R
+Solved in 7 steps.
+../../boards/random_boards/5_very_large/n=100___robots=1___possible_in_20_moves.txt
+STATES SEEN: 691
+0L
+0D
+0L
+0D
+0R
+0U
+0R
+0D
+0R
+0U
+0L
+Solved in 11 steps.
+../../boards/random_boards/5_very_large/n=100___robots=1___possible_in_5_moves.txt
+STATES SEEN: 35
+0R
+0U
+0L
+0U
+0L
+Solved in 5 steps.
+../../boards/random_boards/5_very_large/n=100___robots=2___possible_in_20_moves.txt
+STATES SEEN: 14329
+0U
+0L
+0D
+0L
+0D
+0L
+1L
+1U
+1L
+1D
+0D
+Solved in 11 steps.
+../../boards/random_boards/5_very_large/n=100___robots=2___possible_in_5_moves.txt
+STATES SEEN: 289
+0L
+1D
+1L
+0U
+0L
+Solved in 5 steps.
+../../boards/random_boards/5_very_large/n=100___robots=4___possible_in_20_moves.txt
+STATES SEEN: 17065
+0L
+0U
+0R
+0U
+3D
+0R
+0D
+Solved in 7 steps.
+../../boards/random_boards/5_very_large/n=100___robots=4___possible_in_5_moves.txt
+STATES SEEN: 203
+0L
+2R
+2D
+0R
+Solved in 4 steps.
+../../boards/random_boards/5_very_large/n=100___robots=8___possible_in_20_moves.txt
+STATES SEEN: 14731438
+0D
+0R
+0D
+0R
+0U
+4D
+4L
+4U
+0R
+Solved in 9 steps.
+../../boards/random_boards/5_very_large/n=100___robots=8___possible_in_5_moves.txt
+STATES SEEN: 526
+0U
+0L
+4D
+0R
+Solved in 4 steps.
+../../boards/random_boards/5_very_large/n=200___robots=1___possible_in_20_moves.txt
+STATES SEEN: 1801
+0R
+0D
+0R
+0D
+0R
+0D
+0R
+0U
+0L
+0U
+0L
+0D
+0R
+0U
+Solved in 14 steps.
+../../boards/random_boards/5_very_large/n=200___robots=1___possible_in_5_moves.txt
+STATES SEEN: 39
+0L
+0D
+0L
+0U
+0R
+Solved in 5 steps.

@@ -1,0 +1,12 @@
+<CodeTestConfig>
+  <CpuTimeLimit>5000</CpuTimeLimit>
+  <MemoryLimit>500000</MemoryLimit>
+  <ExecutionMode>All</ExecutionMode>
+  <JudgeType>Custom</JudgeType>
+  <HideExpectedOutput>true</HideExpectedOutput>
+  <Judge>
+    <Language>CSharp</Language>
+    <TargetFile>main</TargetFile>
+    <CpuTimeLimit>1000</CpuTimeLimit>
+  </Judge>
+</CodeTestConfig>

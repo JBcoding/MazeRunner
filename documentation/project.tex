@@ -52,7 +52,6 @@ Flere praktiske informationer findes sidst i dette dokument.
 Bemærk dog følgende vigtige datoer:
 
 \begin{description}
-\item [TODO] Kom-og-kod-workshop med TODO og kage (TODO: ?). Her vil det være muligt at få hjælp og diskutere sin løsning med andre. Sted: Bygning 324/TODO.
 \item [TODO] Deadline for at uploade sit program til CodeJudge.
 \item [TODO] Præmieoverrækkelse. Resultatet af konkurrencen præsenteres og vinderne annonceres. Sted: Bygning 116/81.
 \end{description}
@@ -65,9 +64,6 @@ For at opnå en løsning med få træk, er det meget ofte en fordel (og nogle ga
 
 I labyrinten findes også to slags kontakter der tænder og slukker for stykker af labyrintens mure.
 Begge slags kontakter aktiveres ved at en robot stiller sig på dem.
-
-TODO: er det træls grafisk/banemæssigt at man skal stå oven på dem, og de så stadig er der når man flytter sig?
-
 Den første slags, kaldet skift-kontakter, har fortsat effekt efter robotten flytter sig til et andet felt.
 Den anden slags, kaldet stå-kontakter, slukker kun for et stykke mur mens en robot står på den.
 
@@ -85,9 +81,9 @@ Den anden slags, kaldet stå-kontakter, slukker kun for et stykke mur mens en ro
    ### 0  \phantom{}
  # #      \phantom{}
  A      #a\phantom{}
-A 0 2
-B 5 2
-a 5 9
+A 2 0
+B 2 5
+a 5 8
 \end{Verbatim}
 \end{minipage} 
 \hspace{1cm}
@@ -98,22 +94,22 @@ a 5 9
 \hspace{1cm}
 \begin{minipage}[b]{2.1cm}%
 \begin{Verbatim}[frame=single, numbers=left,showspaces, commandchars=\\\{\}, baselinestretch=0.64, label={\scriptsize Løsning 1}]
-  1R
-  1R
-  1R
-  1U
-  1D
-  1L
-  1L
-  1L
-  1L
-  1L
+1R
+1R
+1R
+1U
+1D
+1L
+1L
+1L
+1L
+1L
 \end{Verbatim}
 \vspace{-4pt}
 \begin{Verbatim}[frame=single, numbers=left,showspaces, commandchars=\\\{\}, baselinestretch=0.64, label={\scriptsize Løsning 2}]
-  0D
-  1L
-  1L
+0D
+1L
+1L
 \end{Verbatim}
 \end{minipage}
 \hspace{1cm}
@@ -143,7 +139,7 @@ a 5 9
 
 \section{Konkurrencen}
 I konkurrencen vil vi arbejde med en tekst-baseret repræsentation af labyrinten.
-Labyrinten ligger på et rektangulært gitter (kaldet banen) bestående af $n \times m$ felter, hvor $2 \leq n,m \leq 1000$. TODO: skal vi gøre den kvadratisk?
+Labyrinten ligger på et rektangulært gitter (kaldet banen) bestående af $n \times m$ felter, hvor $2 \leq n,m \leq 1000$.
 I banen findes $r$ robotter, hvor $1 \leq r \leq 10$. Robotterne er nummeret $0, \ldots, r-1$, og det gælder blot om at få en af robotterne hen på det unikke målfelt.
 
 Figur~\ref{fig:simpleboardexample} viser et eksempel på en bane med $n=10, m=6$ og $r=2$ samt to mulige løsninger. I de næste to sektioner beskrives det formelle input- og outputformat samt kravene til jeres program.

@@ -22,8 +22,8 @@
   belowskip=0pt
 }
 
-\title{\textsc{\Huge Maze Runner}\\\textsc{Programmeringskonkurrence}\\[0.25cm]\includegraphics[height=3cm]{img/boxart.jpg}}
-\date{TODO: billede}
+\title{\textsc{\Huge Maze Runner}\\\textsc{Programmeringskonkurrence}}
+\date{}
 \author{{\small Forfattere:
     Mads Okholm Bjørn,
     Andreas Halkjær From,
@@ -36,8 +36,6 @@
     Tord Joakim Stordalen
 }}
 
-% Tak til Hjalte for forlæg til oplæg
-
 \begin{document}
 
 \maketitle
@@ -46,7 +44,7 @@
 Formålet med denne konkurrence er at designe og implementere et program, der kan føre robotter gennem en dynamisk labyrint.
 De indsendte programmer bliver sat til at dyste mod hinanden, og gruppen, der har lavet det bedste program vinder selvfølgelig en præmie! TODO: præmie?
 
-Man kan deltage i konkurrencen i grupper bestående af op til fire studerende, og deltagelse tæller som en bestået obligatorisk afleveringsopgave for alle gruppemedlemmer. TODO: tæller det som en aflevering?
+Man kan deltage i konkurrencen i grupper bestående af op til fire studerende, og deltagelse tæller som en bestået skriftlig obligatorisk afleveringsopgave for alle gruppemedlemmer.
 Der skal ikke skrives nogen rapport.
 Flere praktiske informationer findes sidst i dette dokument.
 Bemærk dog følgende vigtige datoer:
@@ -180,9 +178,9 @@ Jeres program skal indlæse en bane fra konsollen (\texttt{stdin}), beregne en g
 Det er ikke et krav at jeres program finder den korteste løsning, men jo kortere løsningen er, desto flere points får jeres program.
 
 \section{Sådan kommer du igang -- og anden praktisk information}
-Start med at hente filen \texttt{mr.zip}, der ligger på DTU Inside under fildeling. TODO
+Start med at hente filen \texttt{mr.zip}, der ligger på DTU Inside under fildeling.
 Filen indeholder en skabelon i hhv. Java og C++ med forskellige brugbare metoder til indlæsning af banefiler m.m.
-Prøv at uploade filen \texttt{MazeRunner.java} til CodeJudge -- så burde den klare den første test. TODO
+Prøv at uploade filen \texttt{MazeRunner.java} til CodeJudge -- så burde den klare den første test.
 
 Det er ikke et krav at tage udgangspunkt i disse skabeloner -- I må også meget gerne skrive jeres løsning i andre sprog, der er understøttede på CodeJudge.
 
@@ -202,7 +200,7 @@ Den obligatoriske del består af forholdsvis nemme baner med en enkelt robot.
 Start med at lave en løsning til denne del.
 Konkurrencedelen indeholder større og mere udfordrende baner med op til 10 robotter.
 
-\paragraph{Den obligatoriske del} Uploades en løsning, der består alle tests (5 synlige og 5 skjulte) i den obligatoriske del, tæller dette som en bestået obligatorisk afleveringsopgave for alle medlemmer af gruppen. TODO
+\paragraph{Den obligatoriske del} Uploades en løsning, der består alle tests (5 synlige og 5 skjulte) i den obligatoriske del, tæller dette som en bestået skriftlig obligatorisk afleveringsopgave for alle medlemmer af gruppen.
 
 \paragraph{Konkurrencedelen} Efter deadline tager vi den nyeste version af jeres program i konkurrencedelen og lader det dyste mod de andre programmer på en ukendt samling af baner.
 
@@ -215,16 +213,8 @@ Grupperne er sorteret efter det totale antal points deres løsning har opnået p
 I tilfælde af point-lighed er den bedste gruppe den med det korteste tidsforbrug.
 Bemærk, at vi til den endelige konkurrence også tester jeres program på nye og ukendte baner, så derfor er det ikke sikkert, at den endelige vinder bliver den gruppe, der ligger øverst på Scoreboardet.
 
-\paragraph{TODO: Webapp} På hjemmesiden \url{https://hwv.dk/rr/} findes en app, hvor man kan importere/eksportere baner og løsninger -- og selv prøve at spille banen vha. tastaturet eller mus/touch. Man kan også komme direkte til denne app ved at klikke på visualiseringen af en bane i CodeJudge. Appen er kun testet i Chrome og Safari, men burde også virke i andre browsere og på tablets og touchenheder. Bugs kan mailes til Hjalte på \href{mailto:hwv@hwv.dk}{\texttt{hwv@hwv.dk}}.
+\paragraph{Webapp} På hjemmesiden \url{https://319.dk/MR/} findes en app, hvor man kan importere/eksportere baner og løsninger -- og selv prøve at spille banen vha. tastaturet. Man kan også komme direkte til denne app ved at klikke på visualiseringen af en bane i CodeJudge. Appen er kun testet i Chrome og Safari, men burde også virke i andre browsere og på tablets og touchenheder. Bugs kan mailes til Mads Bjørn.
 
 \paragraph{Nogle gode råd} Start med at lave en løsning, der virker for helt små baner, hvor der kun er en robot. Overvej, hvordan du kan bruge algoritmiske redskaber fra kurset som fx bredde-først-søgning og hashing til at søge efter en løsning.
-
-\begin{figure}
-\centering
-\href{https://hwv.dk/rr/#%7B%22board%22%3A%2237%5Cn10%5Cn%23%23%23%23%23%23%23%23%23%23%23%23%23%23%23%23%23%23%23%23%23%23%23%23%23%23%23%23%23%23%23%23%23%23%23%23%23%5Cn%23456%23%20%23%20%23%20%23%20%23%20%23%20%20%20%23%20%20%20%20%20%20%20%20%20%20%20%23%20%20%20%20%20%23%5Cn%233%237%23%20%23%20%23%20%23%20%23%20%23%20%23%20%23%23%23%20%23%20%23%23%23%23%23%20%23%23%23%20%23%20%23%5Cn%232%238%23%20%20%20%20%20%20%20%23%20%23%20%23%20%20%20%23%20%23%20%23%20%23%20%23%20%23%20%20%20%23%20%23%5Cn%231%239%23%20%23%23%23%23%23%23%23%20%23%20%23%23%23%23%23%20%23%23%23%20%23%20%23%23%23%23%23%20%23%23%23%5Cn%230%23%20%20%20%20%20%20%20%20%20%23%20%20%20%20%20%23%20%20%20%20%20%23%20%23%20%20%20%23%20%20%20%20%20%23%5Cn%23%23%23%23%23%23%23%23%23%20%23%20%23%23%23%23%23%20%23%23%23%20%23%23%23%20%23%20%23%20%23%23%23%20%23%20%23%5Cn%23%20%23%20%23%20%20%20%20%20%23%20%23%20%20%20%20%20%23%20%20%20%20%20%20%20%23%20%23%20%20%20%23%20%23%20%23%5Cn%23%20%23%20%23%23%23%20%23%23%23%20%23%23%23%20%23%20%23%20%23%20%23%23%23%20%23%20%23%23%23%23%23%20%23%23%23%5Cn%23%20%23%20%20%20%20%20%20%20%23%20%23%20%20%20%23%20%23%20%23%20%23%20%23%20%20%20%23%20%20%20%20%20%20%20%23%5Cn%23%20%23%23%23%20%23%20%23%20%23%20%23%20%23%20%23%23%23%23%23%23%23%20%23%20%23%20%23%23%23%23%23%20%23%23%23%5Cn%23%20%20%20%20%20%23%20%23%20%23%20%23%23%23%20%23%20%23%20%23%20%20%20%20%20%23%20%20%20%20%20%20%20%23%20%23%5Cn%23%23%23%20%23%20%23%23%23%23%23%20%20%20%20%20%23%20%23%20%23%20%23%20%23%23%23%20%23%23%23%20%23%20%23%20%23%5Cn%23%20%20%20%23%20%23%20%20%20%23%20%23%20%23%20%23%20%20%20%23%20%23%20%23%20%23%20%23%20%20%20%23%20%23%20%23%5Cn%23%20%23%20%23%23%23%20%23%23%23%23%23%20%23%20%23%20%23%23%23%23%23%23%23%20%23%23%23%20%23%23%23%20%23%20%23%5Cn%23%20%23%20%20%20%23%20%20%20%20%20%23%20%23%20%20%20%20%20%23%20%20%20%20%20%20%20%23%20%20%20%23%20%23%20%23%5Cn%23%23%23%23%23%20%23%23%23%20%23%23%23%23%23%20%23%23%23%20%23%20%23%20%23%23%23%20%23%20%23%23%23%23%23%20%23%5Cn%23%20%23%20%20%20%23%20%23%20%20%20%23%20%23%20%23%20%20%20%20%20%23%20%23%20%20%20%20%20%20%20%20%20%23%20%23%5Cn%23%20%23%20%23%20%23%20%23%20%23%23%23%20%23%20%23%23%23%20%23%23%23%23%23%20%23%23%23%20%23%23%23%23%23%20%23%5Cn%23%20%20%20%23%20%20%20%20%20%20%20%20%20%20%20%23%20%23%20%20%20%23%20%23%20%23%20%20%20%20%20%23%20%20%20%23%5Cn%23%23%23%23%23%20%23%23%23%23%23%23%23%23%23%20%23%20%23%23%23%20%23%20%23%23%23%23%23%20%23%23%23%20%23%20%23%5Cn%23%20%20%20%20%20%23%20%20%20%20%20%20%20%23%20%20%20%20%20%20%20%23%20%20%20%20%20%20%20%20%20%23%20%23%20%23%5Cn%23%20%23%23%23%20%23%20%23%23%23%23%23%20%23%20%23%23%23%23%23%20%23%23%23%23%23%23%23%20%23%20%23%23%23%20%23%5Cn%23%20%23%20%20%20%23%20%20%20%20%23%20%20%23%20%20%20%23%20%23%20%20%20%23%20%20%20%20%20%23%20%20%20%23%20%23%5Cn%23%20%23%23%23%23%23%23%23%23%20%23%23%20%23%23%23%23%23%20%23%23%23%23%23%23%23%23%23%20%23%23%23%23%23%20%23%5Cn%23%20%23%20%20%20%20%20%23%20%20%20%23%20%20%20%23%20%20%20%23%20%20%20%20%20%23%20%20%20%20%20%23%20%20%20%23%5Cn%23%20%23%23%23%23%23%20%23%20%23%23%23%23%23%20%23%23%23%20%23%23%23%20%23%20%23%23%23%20%23%23%23%20%23%23%23%5Cn%23%20%20%20%23%20%20%20%20%20%20%20%20%20%23%20%20%20%20%20%23%20%20%20%23%20%20%20%23%20%23%20%20%20%20%20%23%5Cn%23%23%23%20%23%20%23%23%23%23%23%23%23%23%23%23%23%20%23%23%23%20%23%23%23%23%23%20%23%23%23%20%23%23%23%20%23%5Cn%23%20%20%20%20%20%23%20%20%20%20%20%20%20%20%20%23%20%20%20%23%20%20%20%23%20%23%20%20%20%20%20%23%20%23%20%23%5Cn%23%20%23%23%23%20%23%23%23%23%23%20%23%23%23%23%23%20%23%20%23%20%23%23%23%20%23%23%23%20%23%20%23%20%23%20%23%5Cn%23%20%20%20%23%20%20%20%20%20%20%20%20%20%23%20%20%20%23%20%20%20%23%20%20%20%20%20%20%20%23%20%23%20%20%20%23%5Cn%23%23%23%20%23%23%23%23%23%23%23%20%23%23%23%23%23%20%23%23%23%23%23%23%23%20%23%23%23%20%23%23%23%23%23%20%23%5Cn%23%20%23%20%23%20%20%20%23%20%20%20%23%20%20%20%23%20%23%20%20%20%20%20%23%20%23%20%23%20%23%20%20%20%20%20%23%5Cn%23%20%23%23%23%20%23%23%23%20%23%23%23%20%23%20%23%20%23%20%23%23%23%20%23%23%23%20%23%20%23%23%23%20%23%20%23%5Cn%23%20%20%20%20%20%20%20%20%20%20%20%20%20%23%20%20%20%20%20%23%20%20%20%20%20%20%20%23%20%23%20%20%20%23%20G%5Cn%23%23%23%23%23%23%23%23%23%23%23%23%23%23%23%23%23%23%23%23%23%23%23%23%23%23%23%23%23%23%23%23%23%23%23%23%23%5Cn%22%2C%22moves%22%3A%22%22%2C%22pastMoves%22%3A0%7D}{
-\includegraphics[height=15cm]{img/10-breakout.png}
-}
-\caption{TODO: En af de lidt mere udfordrende baner... (Klik på den!)}
-\end{figure}
 
 \end{document}

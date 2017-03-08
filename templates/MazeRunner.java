@@ -1,7 +1,6 @@
 import java.awt.Point;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.StringTokenizer;
@@ -13,11 +12,11 @@ public class MazeRunner {
 	final char GOAL_CHAR = '!';
 
 	private Point goal;
-	private Point[] robots;
-	 // Switches and the walls, which they affect
+	// Switches and the walls, which they affect
 	private Map<String, Point> toggleSwitches = new HashMap<String, Point>();
 	private Map<String, Point> holdSwitches = new HashMap<String, Point>();
-	private char[][] maze;
+	
+	private Board board;
 	
 	public static void main(String[] args) {
 		MazeRunner mr = new MazeRunner();
@@ -41,13 +40,13 @@ public class MazeRunner {
 			int height = Integer.parseInt(st.nextToken());
 
 			int noOfRobots = Integer.parseInt(br.readLine());
-			robots = new Point[noOfRobots];
+			Point[] robots = new Point[noOfRobots];
 			
 			st = new StringTokenizer(br.readLine());
 			int noOfToggleSwitches = Integer.parseInt(st.nextToken());
 			int noOfHoldSwitches = Integer.parseInt(st.nextToken());			
 			
-			maze = new char[height][width];
+			char[][] maze = new char[width][height];
 			for (int i = 0; i < height; i++) {
 				char[] line = br.readLine().toCharArray();
 				for (int j = 0; j < width; j++) {
@@ -62,27 +61,54 @@ public class MazeRunner {
 	                    System.err.println("Error: Unknown character '" + line[j] + "' on line " + (i+1) + ", column " + (j+1));
 	                }
 					
-					maze[i][j] = line[j];
+					maze[j][i] = line[j];
 				}
 			}
 
 			for (int i = 0; i < noOfToggleSwitches; i++) {
 				st = new StringTokenizer(br.readLine());
+				String key = st.nextToken();
 				int y = Integer.parseInt(st.nextToken());
-				holdSwitches.put(st.nextToken(), new Point(Integer.parseInt(st.nextToken())), y);
+				toggleSwitches.put(key, new Point(Integer.parseInt(st.nextToken()), y));
 			}
+			
 			for (int i = 0; i < noOfHoldSwitches; i++) {
 				st = new StringTokenizer(br.readLine());
+				String key = st.nextToken();
 				int y = Integer.parseInt(st.nextToken());
-				holdSwitches.put(st.nextToken(), new Point(Integer.parseInt(st.nextToken())), y);
+				holdSwitches.put(key, new Point(Integer.parseInt(st.nextToken()), y));
 			}		
 
 	        if (goal == null) {
 	            System.err.println("Error: No goal found on board");
 	        }
+	        
+	        this.board = new Board(robots, maze);
 			
 		} catch (Exception e) {
 			e.printStackTrace();
+		}
+	}
+	
+	public class Board {
+
+		private Point[] robots;
+		private char[][] maze;
+		
+		public Board(Point[] robots, char[][] maze) {
+			this.robots = robots;
+			this.maze = maze;
+		}
+		
+		public String toString() {
+			StringBuilder sb = new StringBuilder();
+			for (int i = 0; i < maze[0].length; i++) {
+				for (int j = 0; j < maze.length; j++) {					
+					sb.append(maze[j][i]);
+				}
+				sb.append('\n');
+			}
+			return sb.toString();
 		}
 	}
 	

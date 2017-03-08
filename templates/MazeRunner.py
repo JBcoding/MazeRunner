@@ -17,6 +17,19 @@ class Direction(Enum):
 	def __str__(self):
 		return self.name[0]
 		
+class Board:
+	def __init__(self, robots, maze):
+		self.robots = robots
+		self.maze = maze
+		
+	def __str__(self):
+		s = ""
+		for i in range(len(maze[0])):
+			for j in range(len(maze)):
+				s += maze[j][i]
+			s += "\n"
+		return s
+		
 EMPTY_CHAR = ' '
 WALL_CHAR = '#'
 GOAL_CHAR = '!'
@@ -25,7 +38,8 @@ goal = None
 # Switches and the walls, which they affect
 toggle_switches = {}
 hold_switches = {}
-maze = []
+
+board = None
 
 def compute_solution():
 	# TODO: Implement really clever stuff here!
@@ -43,13 +57,13 @@ def parse():
 	height = int(dims[1])
 	
 	no_of_Robots = int(raw_input())
-	global robots
 	robots = [None] * no_of_Robots
 		
 	switches = raw_input().split(' ')
 	no_of_toggle_switches = int(switches[0])
 	no_of_hold_switches = int(switches[1])
 	
+	maze = []
 	for i in range(height):
 		line = raw_input()
 		row = []
@@ -75,6 +89,8 @@ def parse():
 		
 	if goal is None:
 		print "Error: No goal found on board"
+		
+	board = Board(robots, maze)
 
 parse()
 compute_solution()

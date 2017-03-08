@@ -29,17 +29,7 @@ public class MazeRunner {
         // TODO: Implement really clever stuff here!
         // For now - just output a couple of moves:
         System.out.println("0"+Direction.Left);
-        System.out.println("0"+Direction.Down);        
-        
-//        System.out.println("Goal: " + goal);
-//        System.out.println("Robots: " + Arrays.toString(robots));
-//        
-//        System.out.println("Toggle switches: " + toggleSwitches);
-//        System.out.println("Hold switches: " + holdSwitches);
-//
-//        for (int i = 0; i < maze.length; i++) {
-//        	System.out.println(Arrays.toString(maze[i]));
-//        }
+        System.out.println("0"+Direction.Down);
 	}
 
 	public void parse() {
@@ -78,13 +68,13 @@ public class MazeRunner {
 
 			for (int i = 0; i < noOfToggleSwitches; i++) {
 				st = new StringTokenizer(br.readLine());
-				toggleSwitches.put(st.nextToken(),
-						new Point(Integer.parseInt(st.nextToken()), Integer.parseInt(st.nextToken())));
+				int y = Integer.parseInt(st.nextToken());
+				holdSwitches.put(st.nextToken(), new Point(Integer.parseInt(st.nextToken())), y);
 			}
 			for (int i = 0; i < noOfHoldSwitches; i++) {
 				st = new StringTokenizer(br.readLine());
-				holdSwitches.put(st.nextToken(),
-						new Point(Integer.parseInt(st.nextToken()), Integer.parseInt(st.nextToken())));
+				int y = Integer.parseInt(st.nextToken());
+				holdSwitches.put(st.nextToken(), new Point(Integer.parseInt(st.nextToken())), y);
 			}		
 
 	        if (goal == null) {

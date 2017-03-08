@@ -22,6 +22,7 @@ WALL_CHAR = '#'
 GOAL_CHAR = '!'
 
 goal = None
+# Switches and the walls, which they affect
 toggle_switches = {}
 hold_switches = {}
 maze = []
@@ -31,20 +32,12 @@ def compute_solution():
 	# For now - just output a couple of moves:
 	print "0" + str(Direction.Left)
 	print "0" + str(Direction.Down)
-	
-	print "Goal: "
-	print goal
-	print "Robots: "
-	print robots
-	print "Toggle switches:"
-	print toggle_switches
-	print "Hold switches:"
-	print hold_switches
-	
-	for i in maze:
-		print i
 
 def parse():
+	# TODO:
+	# This template was intended for Python 2.
+	# If using Python 3, simply change raw_input() to input()
+	
 	dims = raw_input().split(' ')
 	width = int(dims[0])
 	height = int(dims[1])
@@ -74,11 +67,11 @@ def parse():
 			
 	for i in range(no_of_toggle_switches):
 		switch = raw_input().split(' ')
-		toggle_switches[switch[0]] = Point(int(switch[1]), int(switch[2]))
+		toggle_switches[switch[0]] = Point(int(switch[2]), int(switch[1]))
 			
 	for i in range(no_of_hold_switches):
 		switch = raw_input().split(' ')
-		hold_switches[switch[0]] = Point(int(switch[1]), int(switch[2]))
+		hold_switches[switch[0]] = Point(int(switch[2]), int(switch[1]))
 		
 	if goal is None:
 		print "Error: No goal found on board"

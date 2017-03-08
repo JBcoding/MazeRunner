@@ -131,7 +131,7 @@ a 5 8
 \subfloat[To gyldige løsninger af henholdsvis længde 10 og 3.\label{fig:simpleboardsolutions}]{
   \usebox\simpleboardsolution
 }
-\caption{Eksempel på en bane af størrelse $n=10$ med $r=2$ robotter. De sorte felter er vægge og det grønne felt er målfeltet for robot 0. Den optimale løsning til denne bane har længde 3.}
+\caption{Eksempel på en bane af størrelse $n=10$ med $r=2$ robotter. De sorte felter er vægge, og det grønne felt er målfeltet for robotterne. Den optimale løsning til denne bane har længde 3.}
 \label{fig:simpleboardexample}
 \end{figure}
 
@@ -144,11 +144,13 @@ Figur~\ref{fig:simpleboardexample} viser et eksempel på en bane med $n=10, m=6$
 
 \subsection{Inputformat}
 Inputtet til jeres program er en bane som vist i Figur~\ref{fig:simpleboardfile}.
-Den første linje angiver banestørrelsen $n$ og $m$ som to mellemrums-adskilte heltal mellem $2$ og $1000$.
-Den anden linje angiver antallet af robotter $r$ som et heltal mellem $1$ og $10$.
+
+Den første linje angiver henholdsvis bredden,  $n$, og højden, $m$,  af banen som to mellemrumsadskilte heltal mellem $2$ og $1000$.
+Den anden linje angiver antallet af robotter, $r$, som et heltal mellem $1$ og $10$.
 Den tredje linje angiver antallet af skift-kontakter, $\Lambda$, og stå-kontakter, $\lambda$, som to heltal mellem $0$ og $26$ adskilt af mellemrum.
-De efterfølgende $n$ linjer angiver banen.
-Hver af disse linjer består af $m$ symboler, der repræsenterer indholdet på denne position i banen.
+
+De efterfølgende $m$ linjer angiver banen.
+Hver af disse linjer består af $n$ symboler, der repræsenterer indholdet på denne position i banen.
 
 De lovlige symboler i en linje er:
 
@@ -156,7 +158,7 @@ De lovlige symboler i en linje er:
 \item[\texttt{\#}]: Angiver at positionen er en væg.
 \item[(mellemrum)]: Angiver at positionen er tom.
 \item[\texttt{!}]: Angiver målpositionen.
-\item[\texttt{0, 1}, \ldots, $(r-1)$]: Angiver at robotten med dette tal er på denne position.
+\item[\texttt{0, 1}, \ldots, $(r-1)$]: Angiver, at robotten med dette tal er på denne position.
 \item[\texttt{A, B, \ldots, Z}]: Angiver skift-kontakter.
 \item[\texttt{a, b, \ldots, z}]: Angiver stå-kontakter.
 \end{description}
@@ -164,8 +166,8 @@ De lovlige symboler i en linje er:
 Det garanteres, at symbolet \texttt{!}, robotterne \texttt{0, 1}, $\ldots (r-1)$ og kontakterne $a-z$ og $A-Z$ optræder på præcis én position i banen.
 Det garanteres desuden at banen kan løses.
 
-De resterende $\Lambda+\lambda$ linjer består af navnet på en kontakt og dernæst koordinaterne for det stykke mur som kontakten påvirker, se figur \ref{fig:simpleboardfile}.
-
+De resterende $\Lambda+\lambda$ linjer består af navnet på en kontakt og dernæst koordinaterne for det stykke mur, som kontakten påvirker, se figur \ref{fig:simpleboardfile}.
+Alle skift-kontakter angives først, dernæst alle stå-kontakter.
 Koordinaterne er givet som 0-indekserede række-søjle par, så eksempelvis har robot 1 på figur \ref{fig:simpleboardfile} koordinaterne $2, 6$.
 
 \subsection{Outputformat}
@@ -179,7 +181,7 @@ Det er ikke et krav at jeres program finder den korteste løsning, men jo korter
 
 \section{Sådan kommer du igang -- og anden praktisk information}
 Start med at hente filen \texttt{mr.zip}, der ligger på DTU Inside under fildeling.
-Filen indeholder en skabelon i hhv. Java og C++ med forskellige brugbare metoder til indlæsning af banefiler m.m.
+Filen indeholder en skabelon i hhv. Java og Python med forskellige brugbare metoder til indlæsning af banefiler m.m.
 Prøv at uploade filen \texttt{MazeRunner.java} til CodeJudge -- så burde den klare den første test.
 
 Det er ikke et krav at tage udgangspunkt i disse skabeloner -- I må også meget gerne skrive jeres løsning i andre sprog, der er understøttede på CodeJudge.

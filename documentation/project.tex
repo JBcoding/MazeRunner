@@ -76,12 +76,12 @@ Den anden slags, kaldet stå-kontakter, slukker kun for et stykke mur mens en ro
          0\phantom{}
    ###   B\phantom{}
 #  #!#1   \phantom{}
-   ### 0  \phantom{}
+   ###    \phantom{}
  # #      \phantom{}
  A      #a\phantom{}
-A 2 0
-B 2 5
-a 5 8
+A 0 2
+B 5 2
+a 8 5
 \end{Verbatim}
 \end{minipage} 
 \hspace{1cm}
@@ -137,7 +137,7 @@ a 5 8
 
 \section{Konkurrencen}
 I konkurrencen vil vi arbejde med en tekst-baseret repræsentation af labyrinten.
-Labyrinten ligger på et rektangulært gitter (kaldet banen) bestående af $n \times m$ felter, hvor $2 \leq n,m \leq 1000$.
+Labyrinten ligger på et rektangulært gitter (kaldet banen) bestående af $n$ søjler og $m$ rækker, hvor $2 \leq n,m \leq 1000$.
 I banen findes $r$ robotter, hvor $1 \leq r \leq 10$. Robotterne er nummeret $0, \ldots, r-1$, og det gælder blot om at få en af robotterne hen på det unikke målfelt.
 
 Figur~\ref{fig:simpleboardexample} viser et eksempel på en bane med $n=10, m=6$ og $r=2$ samt to mulige løsninger. I de næste to sektioner beskrives det formelle input- og outputformat samt kravene til jeres program.
@@ -166,9 +166,13 @@ De lovlige symboler i en linje er:
 Det garanteres, at symbolet \texttt{!}, robotterne \texttt{0, 1}, $\ldots (r-1)$ og kontakterne $a-z$ og $A-Z$ optræder på præcis én position i banen.
 Det garanteres desuden at banen kan løses.
 
-De resterende $\Lambda+\lambda$ linjer består af navnet på en kontakt og dernæst koordinaterne for det stykke mur, som kontakten påvirker, se figur \ref{fig:simpleboardfile}.
+De resterende $\Lambda+\lambda$ linjer består af navnet på en kontakt og dernæst koordinaterne for det felt, som kontakten påvirker, se figur \ref{fig:simpleboardfile}.
+Der vil altid initielt være en mur på det givne felt.
 Alle skift-kontakter angives først, dernæst alle stå-kontakter.
-Koordinaterne er givet som 0-indekserede række-søjle par, så eksempelvis har robot 1 på figur \ref{fig:simpleboardfile} koordinaterne $2, 6$.
+Koordinaterne er givet som 0-indekserede par af søjler henholdsvis rækker, så eksempelvis har robot 1 på figur \ref{fig:simpleboardfile} koordinaterne $2, 6$.
+To kontakter kan ikke påvirke den samme mur.
+Hvis en robot står på et felt, hvor der dukker en mur op, ender robotten oven på muren.
+Herfra kan robotten dog kun bevæge sig ned på et ledigt felt.
 
 \subsection{Outputformat}
 En gyldig løsning til banen er en sekvens af træk, der bringer en robot hen på målpositionen.

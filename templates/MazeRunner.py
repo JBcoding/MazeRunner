@@ -81,11 +81,11 @@ def parse():
 			
 	for i in range(no_of_toggle_switches):
 		switch = raw_input().split(' ')
-		toggle_switches[switch[0]] = Point(int(switch[2]), int(switch[1]))
+		toggle_switches[switch[0]] = Point(int(switch[1]), int(switch[2]))
 			
 	for i in range(no_of_hold_switches):
 		switch = raw_input().split(' ')
-		hold_switches[switch[0]] = Point(int(switch[2]), int(switch[1]))
+		hold_switches[switch[0]] = Point(int(switch[1]), int(switch[2]))
 		
 	if goal is None:
 		print "Error: No goal found on board"

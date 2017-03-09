@@ -67,16 +67,12 @@ public class MazeRunner {
 
 			for (int i = 0; i < noOfToggleSwitches; i++) {
 				st = new StringTokenizer(br.readLine());
-				String key = st.nextToken();
-				int y = Integer.parseInt(st.nextToken());
-				toggleSwitches.put(key, new Point(Integer.parseInt(st.nextToken()), y));
+				toggleSwitches.put(st.nextToken(), new Point(Integer.parseInt(st.nextToken()), Integer.parseInt(st.nextToken())));
 			}
 			
 			for (int i = 0; i < noOfHoldSwitches; i++) {
 				st = new StringTokenizer(br.readLine());
-				String key = st.nextToken();
-				int y = Integer.parseInt(st.nextToken());
-				holdSwitches.put(key, new Point(Integer.parseInt(st.nextToken()), y));
+				holdSwitches.put(st.nextToken(), new Point(Integer.parseInt(st.nextToken()), Integer.parseInt(st.nextToken())));
 			}		
 
 	        if (goal == null) {

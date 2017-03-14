@@ -1,9 +1,9 @@
 <!doctype html>
 <html>
-	<head>
-		<meta charset="UTF-8">
-		<title>Maze Runner</title>
-		<style>
+    <head>
+        <meta charset="UTF-8">
+        <title>Maze Runner</title>
+        <style>
       html {
     -moz-user-select: -moz-none;
     -khtml-user-select: none;
@@ -193,44 +193,44 @@ ul{height:200px; width:95%;}
 ul{overflow:hidden; overflow-y:scroll;}
 
         </style>
-	</head>
-	<body>
-		<canvas id="canvas">
-			Get a better browser noob.
-		</canvas>
-		<div id="buttomBuffer" class="notLevel"></div>
-		<div id="leftBuffer" class="notLevel"></div>
-		<div id="sideBar" class="notLevel">
-			You control the blue robot, with the arrow keys. <br> <br> You select robot with the numbers on your keyboard, or by using the buttons. <br> <br>
-			<div id="numbers">
-				Robots:<br>
-			</div>
-			<br>
-			<div id="skins">
-				Skins:<br>
-			</div>
-			<br>
-			<ul id="movesBox">
-				<li class="selected" selected="selected" onclick="OnMoveChanged(this.innerHTML)">Initial State</li>
-			</ul>
-			<br>
-			<div id="skins">
-				<div class="skin" onclick="previousMove();">Previous</div>
-				<div class="skin" onclick="nextMove();">Next</div>
-				<br><br>
-				<div class="skin" onclick="playLevel();">Play</div>
-				<div class="skin" onclick="OnMoveChanged(0);">Reset</div>
-				<br><br>
-				<br><br>
-				<div class="skin" onclick="clearLevel()">Clear</div>
-				<div class="skin" onclick="document.getElementById('boardBoxPop').style.visibility = 'visible'; document.getElementById('boardField').value = map;">Board file</div>
-				<br><br>
-				<div class="skin" onclick="document.getElementById('moveBoxPop').style.visibility = 'visible'; document.getElementById('movesField').value = getMovesString();">Move file</div>
-				<div class="skin" onclick="openURL()">Get URL</div>
-			</div>
-		</div>
-		
-		
+    </head>
+    <body style="height: 800px;">
+        <canvas id="canvas">
+            Get a better browser noob.
+        </canvas>
+        <div id="buttomBuffer" class="notLevel"></div>
+        <div id="leftBuffer" class="notLevel"></div>
+        <div id="sideBar" class="notLevel">
+            You control the blue robot, with the arrow keys. <br> <br> You select robot with the numbers on your keyboard, or by using the buttons. <br> <br>
+            <div id="numbers">
+                Robots:<br>
+            </div>
+            <br>
+            <div id="skins">
+                Skins:<br>
+            </div>
+            <br>
+            <ul id="movesBox">
+                <li class="selected" selected="selected" onclick="OnMoveChanged(this.innerHTML)">Initial State</li>
+            </ul>
+            <br>
+            <div id="skins">
+                <div class="skin" onclick="previousMove();">Previous</div>
+                <div class="skin" onclick="nextMove();">Next</div>
+                <br><br>
+                <div class="skin" onclick="playLevel();">Play</div>
+                <div class="skin" onclick="OnMoveChanged(0);">Reset</div>
+                <br><br>
+                <br><br>
+                <div class="skin" onclick="clearLevel()">Clear</div>
+                <div class="skin" onclick="document.getElementById('boardBoxPop').style.visibility = 'visible'; document.getElementById('boardField').value = map;">Board file</div>
+                <br><br>
+                <div class="skin" onclick="document.getElementById('moveBoxPop').style.visibility = 'visible'; document.getElementById('movesField').value = getMovesString();">Move file</div>
+                <div class="skin" onclick="openURL()">Get URL</div>
+            </div>
+        </div>
+        
+        
 <div id="moveBoxPop" tabindex="-1" role="dialog" style="position: absolute; height: auto; width: 430px; top: 200px; left: 200px; display: block; z-index: 101; background-color: green; visibility: hidden; border:2px solid black; border-radius: 10px; padding: 10px;">
 <div>
 <span id="ui-id-4">
@@ -266,16 +266,17 @@ Cancel</div>
 </div>
 </div>
 
-		
-		
-		
-		<div id="rightBuffer" class="notLevel"></div>
-	</body>
-	<script> var moves = "%%%CJ:output%%%"; </script>
-	<script> var map = "%%%CJ:input%%%"; </script>
-	<script>
-     /*
+        
+        
+        
+        <div id="rightBuffer" class="notLevel"></div>
+    </body>
+    <script> var moves = "%%%CJ:output%%%"; </script>
+    <script> var map = "%%%CJ:input%%%"; </script>
+    <script>
+   /*
     TODO:
+    Tilføj trump tema
 */
 
 var canvas      = document.getElementById('canvas');
@@ -310,6 +311,8 @@ for (var i = 0; i < skins.length; i ++) {
     iDiv.className = 'skin' + ((i == currentSkin) ? " active" : "");
     iDiv.addEventListener('click', changeSkin);
     document.getElementById('skins').appendChild(iDiv);
+    var br = document.createElement("br");
+    document.getElementById('skins').appendChild(br);
 }
 
 function loadImages(folder) {
@@ -413,37 +416,42 @@ function drawLevel() {
     var wireColors = ["red", "green", "blue"];
     var wireWidth = sqaureSize / 30;
     for (var i = 0; i < wires.length; i ++) {
-        var x1 = wires[i][0][0];
-        var y1 = wires[i][0][1];
-        var x2 = wires[i][1][0];
-        var y2 = wires[i][1][1];
-        var offset = wireWidth * 4 + (i * wireWidth * 2) % (sqaureSize - wireWidth * 8);
-        ctx.fillStyle = wireColors[i % wireColors.length];
-        
-        
-        ctx.beginPath();
-        ctx.arc(sideWidth + x1 * sqaureSize + offset, y1 * sqaureSize + offset, wireWidth * 2, 0, 2 * Math.PI, false);
-        ctx.fill();
-        ctx.lineWidth = wireWidth / 2;
-        ctx.strokeStyle = '#003300';
-        ctx.stroke();
-        
-        ctx.beginPath();
-        ctx.arc(sideWidth + x2 * sqaureSize + offset, y2 * sqaureSize + offset, wireWidth * 2, 0, 2 * Math.PI, false);
-        ctx.fill();
-        ctx.lineWidth = wireWidth / 2;
-        ctx.strokeStyle = '#333333';
-        ctx.stroke();
-        
-        
-        ctx.strokeStyle = wireColors[i % wireColors.length];
-        ctx.lineWidth = wireWidth;
-        
-        ctx.beginPath();
-        ctx.moveTo(sideWidth + x1 * sqaureSize + offset, y1 * sqaureSize + offset);
-        ctx.lineTo(sideWidth + x1 * sqaureSize + offset, y2 * sqaureSize + offset);
-        ctx.lineTo(sideWidth + x2 * sqaureSize + offset, y2 * sqaureSize + offset);
-        ctx.stroke();
+        try {
+     
+            var x1 = wires[i][0][0];
+            var y1 = wires[i][0][1];
+            var x2 = wires[i][1][0];
+            var y2 = wires[i][1][1];
+            var offset = wireWidth * 4 + (i * wireWidth * 2) % (sqaureSize - wireWidth * 8);
+            ctx.fillStyle = wireColors[i % wireColors.length];
+            
+            ctx.beginPath();
+
+            ctx.arc(sideWidth + x1 * sqaureSize + offset, y1 * sqaureSize + offset, wireWidth * 2, 0, 2 * Math.PI, false);
+            ctx.fill();
+            ctx.lineWidth = wireWidth / 2;
+            ctx.strokeStyle = '#003300';
+            ctx.stroke();
+            
+            ctx.beginPath();
+            ctx.arc(sideWidth + x2 * sqaureSize + offset, y2 * sqaureSize + offset, wireWidth * 2, 0, 2 * Math.PI, false);
+            ctx.fill();
+            ctx.lineWidth = wireWidth / 2;
+            ctx.strokeStyle = '#333333';
+            ctx.stroke();
+            
+            
+            ctx.strokeStyle = wireColors[i % wireColors.length];
+            ctx.lineWidth = wireWidth;
+            
+            ctx.beginPath();
+            ctx.moveTo(sideWidth + x1 * sqaureSize + offset, y1 * sqaureSize + offset);
+            ctx.lineTo(sideWidth + x1 * sqaureSize + offset, y2 * sqaureSize + offset);
+            ctx.lineTo(sideWidth + x2 * sqaureSize + offset, y2 * sqaureSize + offset);
+            ctx.stroke();
+        } catch(err) {
+            // damn
+        }
     }
 }
 
@@ -586,7 +594,7 @@ function checkKey(e, b, instant) {
                 performActionAtPosition(level[robots[selectedRobot][0]][robots[selectedRobot][1]]);
             }
             if (!instant) {
-                animateMove(deepCopyxDimArray(pos), deepCopyxDimArray(robots[selectedRobot]), 15, b);
+                animateMove(deepCopyxDimArray(pos), deepCopyxDimArray(robots[selectedRobot]), 5, b);
             } else {
                 dePerformActionAtPosition(level[pos[0]][pos[1]]);
                 performActionAtPosition(level[robots[selectedRobot][0]][robots[selectedRobot][1]]);
@@ -605,10 +613,10 @@ locked = false;
 
 function animateMove(fromPos, toPos, stepsBack) {
     locked = true;
-    robots[selectedRobot][0] = (fromPos[0] * stepsBack + toPos[0] * (15 - stepsBack)) / 15.0;
-    robots[selectedRobot][1] = (fromPos[1] * stepsBack + toPos[1] * (15 - stepsBack)) / 15.0;
+    robots[selectedRobot][0] = (fromPos[0] * stepsBack + toPos[0] * (5 - stepsBack)) / 5.0;
+    robots[selectedRobot][1] = (fromPos[1] * stepsBack + toPos[1] * (5 - stepsBack)) / 5.0;
     drawLevel();
-    if (stepsBack == 7) {
+    if (stepsBack == 3) {
         dePerformActionAtPosition(level[fromPos[0]][fromPos[1]]);
         performActionAtPosition(level[toPos[0]][toPos[1]], 1);
     }
@@ -670,6 +678,12 @@ function resetCanvas() {
 
 
 function makeAutoMove() {
+    if (locked || oLock) {
+        timer = setTimeout(makeAutoMove, 200);
+        return;
+    }
+    moves = moves.split("\n").join("");
+    console.log(moves);
     if (moves.length >= 2) {
         superLock = true;
         nextRobot = moves.charAt(0);
@@ -696,19 +710,36 @@ function makeAutoMove() {
         var le = document.getElementById("movesBox").children.length;
         checkKey(e);
         if (le == document.getElementById("movesBox").children.length) {
-            var option = document.createElement("li");
-            option.appendChild(document.createTextNode(((document.getElementById("movesBox").children.length) + ": ") + nextRobot + nextDirection));
-            option.addEventListener('click', OnMoveChanged);
-            document.getElementById("movesBox").appendChild(option);;
-            levelBackup.push(deepCopyxDimArray(level));
-            robotsBackup.push(deepCopyxDimArray(robots));
-            OnMoveChanged(le);
+            oLock = true;
+            setTimeout(function(){
+                addElement(((document.getElementById("movesBox").children.length) + ": ") + nextRobot + nextDirection);
+            }, 2);
+            
         }
         superLock = true;
-        timer = setTimeout(makeAutoMove, 500);
+        timer = setTimeout(makeAutoMove, 200);
     } else {
         superLock = false;
     }
+}
+
+oLock = false;
+
+function addElement(s) {
+    if (locked) {
+        setTimeout(function(){
+            addElement(s);
+        }, 2);
+        return;
+    }
+    var option = document.createElement("li");
+    option.appendChild(document.createTextNode(s));
+    option.addEventListener('click', OnMoveChanged);
+    document.getElementById("movesBox").appendChild(option);;
+    levelBackup.push(deepCopyxDimArray(level));
+    robotsBackup.push(deepCopyxDimArray(robots));
+    OnMoveChanged(le);
+    oLock = false;
 }
 
 makeAutoMove();
@@ -784,6 +815,9 @@ function parseMap() {
         return row[i] 
       })
     });
+    
+    levelBackup = new Array();
+    robotsBackup = new Array();
     
     levelBackup.push(deepCopyxDimArray(level));
     robotsBackup.push(deepCopyxDimArray(robots));
@@ -954,10 +988,14 @@ function previousMove() {
 }
 
 function playLevel() {
+    if (locked || oLock) {
+        timer = setTimeout(playLevel, 200);
+        return;
+    }
     superLock = false;
     if (nextMove()) {
         superLock = true;
-        timer = setTimeout(playLevel, 500);
+        timer = setTimeout(playLevel, 200);
     } else {
         superLock = false;
     }
@@ -972,7 +1010,7 @@ function getMovesString() {
 }
 
 function parseMovesString() {
-    clearLevel();
+    OnMoveChanged(0);
     moves = document.getElementById('movesField').value.split("\n").join("");
     while (moves.length >= 2) {
         console.log(moves);
@@ -1006,6 +1044,5 @@ function openURL() {
     console.log(map.split(" ").join("%20").split("#").join("%23"));
     window.open("http://www.319.dk/MR/?map=" + map.split(" ").join("%20").split("#").join("%23").split("\n").join("\\n") + "&moves=" + getMovesString(),'_blank');
 }
-
     </script>
 </html>

@@ -1,0 +1,88 @@
+<!doctype html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title>Maze Runner</title>
+		<link rel="stylesheet" type="text/css" href="master.css">
+	</head>
+	<body>
+		<canvas id="canvas">
+			Get a better browser noob.
+		</canvas>
+		<div id="buttomBuffer" class="notLevel"></div>
+		<div id="leftBuffer" class="notLevel"></div>
+		<div id="sideBar" class="notLevel">
+			You control the blue robot, with the arrow keys. <br> <br> You select robot with the numbers on your keyboard, or by using the buttons. <br> <br>
+			<div id="numbers">
+				Robots:<br>
+			</div>
+			<br>
+			<div id="skins">
+				Skins:<br>
+			</div>
+			<br>
+			<ul id="movesBox">
+				<li class="selected" selected="selected" onclick="OnMoveChanged(this.innerHTML)">Initial State</li>
+			</ul>
+			<br>
+			<div id="skins">
+				<div class="skin" onclick="previousMove();">Previous</div>
+				<div class="skin" onclick="nextMove();">Next</div>
+				<br><br>
+				<div class="skin" onclick="playLevel();">Play</div>
+				<div class="skin" onclick="OnMoveChanged(0);">Reset</div>
+				<br><br>
+				<br><br>
+				<div class="skin" onclick="clearLevel()">Clear</div>
+				<div class="skin" onclick="document.getElementById('boardBoxPop').style.visibility = 'visible'; document.getElementById('boardField').value = map;">Board file</div>
+				<br><br>
+				<div class="skin" onclick="document.getElementById('moveBoxPop').style.visibility = 'visible'; document.getElementById('movesField').value = getMovesString();">Move file</div>
+				<div class="skin" onclick="openURL()">Get URL</div>
+			</div>
+		</div>
+		
+		
+<div id="moveBoxPop" tabindex="-1" role="dialog" style="position: absolute; height: auto; width: 430px; top: 200px; left: 200px; display: block; z-index: 101; background-color: green; visibility: hidden; border:2px solid black; border-radius: 10px; padding: 10px;">
+<div>
+<span id="ui-id-4">
+Move File</span>
+</div>
+<textarea class="codetext" rows="10" cols="50" id="movesField">
+</textarea>
+<div class="ui-dialog-buttonpane ui-widget-content ui-helper-clearfix">
+<div class="ui-dialog-buttonset">
+<div class="skin" onclick="parseMovesString();">
+Load moves</div>
+<div class="skin" onclick="document.getElementById('moveBoxPop').style.visibility = 'hidden';">
+Cancel</div>
+</div>
+</div>
+</div>
+
+
+<div id="boardBoxPop" tabindex="-1" role="dialog" style="position: absolute; height: auto; width: 430px; top: 200px; left: 200px; display: block; z-index: 101; background-color: green; visibility: hidden; border:2px solid black; border-radius: 10px; padding: 10px;">
+<div>
+<span id="ui-id-4">
+Board File</span>
+</div>
+<textarea class="codetext" rows="10" cols="50" id="boardField">
+</textarea>
+<div class="ui-dialog-buttonpane ui-widget-content ui-helper-clearfix">
+<div class="ui-dialog-buttonset">
+<div class="skin" onclick="loadBoardFile()">
+Load board</div>
+<div class="skin" onclick="document.getElementById('boardBoxPop').style.visibility = 'hidden';">
+Cancel</div>
+</div>
+</div>
+</div>
+
+		
+		
+		
+		<div id="rightBuffer" class="notLevel"></div>
+	</body>
+	<script> var moves = "%%%CJ:output%%%"; </script>
+	<script> var map = '%%%CJ:input%%%'; </script>
+	<script src="main.js"></script>
+</html>

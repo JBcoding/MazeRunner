@@ -43,7 +43,7 @@
 
 \section{Introduktion}
 Formålet med denne konkurrence er at designe og implementere et program, der kan føre robotter gennem en dynamisk labyrint.
-De indsendte programmer bliver sat til at dyste mod hinanden, og gruppen, der har lavet det bedste program vinder selvfølgelig en præmie! TODO: præmie?
+De indsendte programmer bliver sat til at dyste mod hinanden, og gruppen, der har lavet det bedste program vinder selvfølgelig en præmie!
 
 Man kan deltage i konkurrencen i grupper bestående af op til fire studerende, og deltagelse tæller som en bestået skriftlig obligatorisk afleveringsopgave for alle gruppemedlemmer.
 Der skal ikke skrives nogen rapport.
@@ -51,8 +51,9 @@ Flere praktiske informationer findes sidst i dette dokument.
 Bemærk dog følgende vigtige datoer:
 
 \begin{description}
-\item [TODO] Deadline for at uploade sit program til CodeJudge.
-\item [TODO] Præmieoverrækkelse. Resultatet af konkurrencen præsenteres og vinderne annonceres. Sted: Bygning 116/81.
+\item [20. april] Deadline for at aflevere som mandatory på CodeJudge.
+\item [27. april] Deadline for at deltage i konkurrencen på CodeJudge.
+\item [4. maj] Præmieoverrækkelse. Resultatet af konkurrencen præsenteres og vinderne annonceres.\\Sted: 116/81.
 \end{description}
 
 \subsection{Kort om labyrinten}
@@ -65,6 +66,9 @@ I labyrinten findes også to slags kontakter der tænder og slukker for stykker 
 Begge slags kontakter aktiveres ved at en robot stiller sig på dem.
 Den første slags, kaldet skift-kontakter, har fortsat effekt efter robotten flytter sig til et andet felt.
 Den anden slags, kaldet stå-kontakter, slukker kun for et stykke mur mens en robot står på den.
+
+Hvis et felt er frit i tidsskridt $t$ og en robot står ved siden af feltet, kan den flytte sig så den står på feltet i tidsskridt $t+1$.
+Dette gælder også selvom robotten f.eks. står på den kontakt der gør feltet frit.
 
 \newsavebox{\simpleboard}
 \begin{lrbox}\simpleboard%
@@ -116,15 +120,15 @@ a 8 5
 
 \begin{figure}
 \centering
-\subfloat[Brættet \texttt{2-simpleboard.txt}. De grå prikker er mellemrum.\label{fig:simpleboardfile}]{
+\subfloat[Eksempel på en bane. De grå prikker er mellemrum.\label{fig:simpleboardfile}]{
 \usebox\simpleboard
 }
 \hspace{0.2cm}
-\subfloat[TODO: Visualisering af \texttt{2-simpleboard.txt}.\label{fig:simpleboardgui}]{
+\subfloat[Visualisering af banen til venstre.\label{fig:simpleboardgui}]{
 \begin{minipage}[b]{5cm}
   \centering
   \begingroup\fboxsep=0pt
-  \fbox{\href{test}{\includegraphics[height=4cm]{img/2-simpleboard.png}}}
+  \fbox{\includegraphics[height=3cm]{img/simpleboard.png}}
   \endgroup
 \end{minipage}
 }
@@ -219,6 +223,8 @@ Konkurrencedelen indeholder større og mere udfordrende baner med op til 10 robo
 Grupperne er sorteret efter det totale antal points deres løsning har opnået på konkurrencebanerne.
 I tilfælde af point-lighed er den bedste gruppe den med det korteste tidsforbrug.
 Bemærk, at vi til den endelige konkurrence også tester jeres program på nye og ukendte baner, så derfor er det ikke sikkert, at den endelige vinder bliver den gruppe, der ligger øverst på Scoreboardet.
+
+\noindent Hvis der er problemer med CodeJudge så kontakt Thomas.
 
 \paragraph{Webapp} På hjemmesiden \url{https://319.dk/MR/} findes en app, hvor man kan importere/eksportere baner og løsninger -- og selv prøve at spille banen vha. tastaturet. Man kan også komme direkte til denne app ved at klikke på visualiseringen af en bane i CodeJudge. Appen er kun testet i Chrome og Safari, men burde også virke i andre browsere og på tablets og touchenheder. Bugs kan mailes til Mads Bjørn.
 

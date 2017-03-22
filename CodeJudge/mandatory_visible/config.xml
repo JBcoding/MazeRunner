@@ -1,7 +1,7 @@
 <CodeTestConfig>
   <CpuTimeLimit>5000</CpuTimeLimit>
   <MemoryLimit>500000</MemoryLimit>
-  <ExecutionMode>All</ExecutionMode>
+  <ExecutionMode>UntillFailure</ExecutionMode>
   <JudgeType>Custom</JudgeType>
   <Judge>
     <Language>Java</Language>

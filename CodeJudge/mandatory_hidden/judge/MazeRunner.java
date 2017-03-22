@@ -35,12 +35,17 @@ public class MazeRunner {
 	private Board board;
 	
 	public static void main(String[] args) {
+//		IF GENERATOR
+//		System.out.println(generateBoard(5, 5, 1, 1, 1, 10));
+		
+//		IF SOLVER
+//		MazeRunner mr = new MazeRunner();
+//		mr.parse();
+//		System.out.println(mr.computeSolution());
+		
+//		IF JUDGE
 		MazeRunner mr = new MazeRunner();
-		
-//		mr.parse(generateBoard(10, 10, 3, 2, 2, 8));
 		mr.parse();
-//		mr.computeSolution()
-		
 		String fileName = "output";
 		int length = 0;
 		try {
@@ -51,17 +56,15 @@ public class MazeRunner {
 		
 		File file = new File(fileName);
 		try {
-			int result = mr.check(new BufferedReader(new FileReader(file)), length);
-			if (result > 0) {
+			boolean success = mr.check(new BufferedReader(new FileReader(file)), length);
+			if (success) {
 				System.out.println("RESULT CORRECT");
-				System.out.println("SCORE " + 1000 / result);
 			} else {
 				fail("The solution did not reach the goal.");
 			}
 		} catch (IOException e) {
 			fail("Could not read solution.");
 		}
-		
 	}
 	
 	public static void fail(String reason) {
@@ -70,24 +73,15 @@ public class MazeRunner {
 	}
 	
 	public static int countLines(String filename) throws IOException {
-	    InputStream is = new BufferedInputStream(new FileInputStream(filename));
-	    try {
-	        byte[] c = new byte[1024];
-	        int count = 0;
-	        int readChars = 0;
-	        boolean empty = true;
-	        while ((readChars = is.read(c)) != -1) {
-	            empty = false;
-	            for (int i = 0; i < readChars; ++i) {
-	                if (c[i] == '\n') {
-	                    ++count;
-	                }
-	            }
-	        }
-	        return (count == 0 && !empty) ? 1 : count;
-	    } finally {
-	        is.close();
-	    }
+		BufferedReader r = new BufferedReader(new FileReader(filename));
+		String s;
+		int lines = 0;
+		while ((s = r.readLine()) != null) {
+			if (s.length() > 1)
+				lines++;
+		}
+		r.close();
+		return lines;
 	}
 	
 	public String computeSolution() {
@@ -216,30 +210,30 @@ public class MazeRunner {
 		return p.x >= 0 && p.y >= 0 && p.x < board.maze.length && p.y < board.maze[0].length;
 	}
 	
-	public int check(String s) {
+	public boolean check(String s) {
 		try {
 			return check(new BufferedReader(new StringReader(s)));
 		} catch (IOException e) {
 			e.printStackTrace();
-			return -1;
+			return false;
 		}
 	}
 	
-	public int check() {
+	public boolean check() {
 		try {
 			return check(new BufferedReader(new InputStreamReader(System.in)));
 		} catch (IOException e) {
 			e.printStackTrace();
-			return -1;
+			return false;
 		}
 	}
 	
-	public int check(BufferedReader br) throws IOException {
+	public boolean check(BufferedReader br) throws IOException {
 		final int limit = 1000;
 		return check(br, limit);
 	}
 	
-	public int check(BufferedReader br, int moves) throws IOException {
+	public boolean check(BufferedReader br, int moves) throws IOException {
 		Point[] robots = board.robots;
 		char[][] maze = copyMaze(board.maze);
 		for (Point r : robots) {
@@ -248,19 +242,30 @@ public class MazeRunner {
 		
 		int steps = 0;
 		for (int m = 0; m <= moves; m++) {
-			char[] input = br.readLine().toCharArray();
+			char[] input;
+			try {
+				input = br.readLine().toCharArray();
+			} catch (NullPointerException e) {
+				return false;
+			}
 			if (input.length < 2) continue;
-			steps++;
 			int r = (int)(input[0] - '0');
+			if (r < 0 || r >= robots.length) {
+				fail("Saw symbol " + input[0] + " but expected a robot number in the range 0 to " + (robots.length - 1));
+				System.exit(0);
+			}
 			Point robot = robots[r];
 			char oldTile = board.maze[robot.x][robot.y];
 			maze[robot.x][robot.y] = oldTile;
 			
-			switch (input[1]) {
+			switch (Character.toUpperCase(input[1])) {
 			case 'U': robots[r].translate(0, -1); break;
 			case 'D': robots[r].translate(0, 1); break;
 			case 'L': robots[r].translate(-1, 0); break;
 			case 'R': robots[r].translate(1, 0); break;
+			default:
+				fail("Saw symbol " + input[1] + " but expected a direction (i.e. 'U', 'D', 'L' or 'R')");
+				System.exit(0);
 			}
 
 			if (!inBounds(robots[r]) || maze[robot.x][robot.y] == WALL_CHAR || Character.isDigit(maze[robot.x][robot.y])) {
@@ -284,7 +289,7 @@ public class MazeRunner {
 			}
 
 			if (newTile == GOAL_CHAR) {
-				return steps; // TODO: return steps? What about if they hit goal and then leave it again?
+				return true;
 			} else if (Character.isLetter(newTile)) {
 				if (Character.isUpperCase(newTile)) {
 					Point toggle = toggleSwitches.get(String.valueOf(newTile));
@@ -315,7 +320,7 @@ public class MazeRunner {
 				}
 			}
 		}
-		return -1;
+		return false;
 	}
 	
 	public static String generateBoard(int width, int height, int noOfRobots, int noOfToggleSwitches, int noOfHoldSwitches, int minPathLength) {
